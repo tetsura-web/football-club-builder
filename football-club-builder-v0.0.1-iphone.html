@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>育成が楽しいサッカークラブ運営ゲーム v0.0.1</title>
+  <style>
+:root {
+  --bg: #f3f7f2;
+  --card: #ffffff;
+  --text: #1e2a22;
+  --muted: #66736a;
+  --line: #dce6dc;
+  --main: #2fa84f;
+  --main-dark: #1f7c3a;
+  --danger: #b33a3a;
+  --shadow: 0 8px 24px rgba(30, 70, 40, .10);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Yu Gothic UI", Meiryo, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button, select {
+  font: inherit;
+}
+button {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+button.primary {
+  background: var(--main);
+  color: #fff;
+  border-color: var(--main);
+  font-weight: 700;
+}
+button.ghost {
+  background: rgba(255,255,255,.75);
+}
+button:hover { filter: brightness(.98); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 11px 12px;
+  background: #fff;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  background: linear-gradient(90deg, rgba(47,168,79,.95), rgba(69,190,102,.90));
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+.game-title { font-weight: 800; font-size: 16px; }
+.version { font-size: 12px; opacity: .9; }
+
+.screen { display: none; padding: 16px; max-width: 1100px; margin: 0 auto; }
+.screen.active { display: block; }
+
+.hero {
+  margin: 28px auto;
+  max-width: 760px;
+  background: var(--card);
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+.hero h1 { margin-top: 0; font-size: 28px; }
+.hero p { color: var(--muted); line-height: 1.8; }
+.setup-card {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+.setup-card label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.club-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: stretch;
+  margin: 14px 0;
+}
+.club-header h2 { margin: 0 0 4px; }
+.muted { color: var(--muted); }
+.large { font-size: 18px; font-weight: 700; }
+.club-money {
+  min-width: 160px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  line-height: 1.8;
+}
+
+.tabs {
+  position: sticky;
+  top: 58px;
+  z-index: 9;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0 12px;
+  background: var(--bg);
+}
+.tab {
+  white-space: nowrap;
+  border-radius: 999px;
+}
+.tab.active {
+  background: var(--main-dark);
+  color: #fff;
+  border-color: var(--main-dark);
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.grid { display: grid; gap: 14px; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.card h3 { margin-top: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.stats {
+  display: grid;
+  gap: 8px;
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 6px;
+}
+
+.match-result {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.table-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+th, td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 6px;
+  text-align: left;
+  font-size: 13px;
+}
+th {
+  color: var(--muted);
+  font-weight: 800;
+  background: #f8fbf8;
+}
+.badge {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #edf7ed;
+  color: var(--main-dark);
+  border: 1px solid #cbe8ce;
+}
+.market-list {
+  display: grid;
+  gap: 10px;
+}
+.market-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+.market-card .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 460px;
+  overflow: auto;
+}
+.log-item {
+  padding: 10px;
+  border-left: 4px solid var(--main);
+  background: #f8fbf8;
+  border-radius: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .club-header { flex-direction: column; }
+  .grid.two { grid-template-columns: 1fr; }
+  .hero { margin: 12px auto; padding: 18px; }
+  .hero h1 { font-size: 23px; }
+  .tabs { top: 54px; }
+  .screen { padding: 12px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div>
+        <div class="game-title">育成が楽しいサッカークラブ運営ゲーム</div>
+        <div class="version">v0.0.1 / ブラウザ試作版</div>
+      </div>
+      <button id="newGameBtn" class="ghost">新しく始める</button>
+    </header>
+
+    <section id="startScreen" class="screen active">
+      <div class="hero">
+        <h1>小さなクラブを、時間をかけて育てる。</h1>
+        <p>
+          自治体名＋ランダムチーム名でクラブを自動生成し、J3相当のリーグからスタートします。
+          ベテラン・大卒・レンタル・ユースを使い分けて、クラブの歴史を積み上げていく試作版です。
+        </p>
+        <div class="setup-card">
+          <label>代表クラブの本拠地</label>
+          <select id="homeCitySelect"></select>
+          <label>クラブタイプ</label>
+          <select id="clubTypeSelect">
+            <option value="random">おまかせ</option>
+            <option value="local">地方育成クラブ</option>
+            <option value="fallen">元名門クラブ</option>
+            <option value="industrial">工業都市クラブ</option>
+            <option value="college">学園都市クラブ</option>
+            <option value="port">港町クラブ</option>
+          </select>
+          <button id="startBtn" class="primary">クラブを作って開始</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <div class="club-header">
+        <div>
+          <h2 id="clubName">クラブ名</h2>
+          <div id="clubSub" class="muted">リーグ / 年度</div>
+        </div>
+        <div class="club-money">
+          <div>資金 <strong id="moneyText">0</strong></div>
+          <div>サポーター <strong id="supportersText">0</strong></div>
+        </div>
+      </div>
+
+      <nav class="tabs">
+        <button data-tab="home" class="tab active">ホーム</button>
+        <button data-tab="squad" class="tab">選手</button>
+        <button data-tab="tactics" class="tab">戦術</button>
+        <button data-tab="league" class="tab">順位</button>
+        <button data-tab="market" class="tab">補強</button>
+        <button data-tab="log" class="tab">日誌</button>
+      </nav>
+
+      <main>
+        <section id="tab-home" class="tab-panel active">
+          <div class="grid two">
+            <div class="card">
+              <h3>次の行動</h3>
+              <p id="nextMatchText" class="large"></p>
+              <div class="actions">
+                <button id="playNextBtn" class="primary">次の試合へ</button>
+                <button id="skipMonthBtn">1か月進める</button>
+                <button id="seasonEndBtn">シーズン最後まで</button>
+              </div>
+            </div>
+            <div class="card">
+              <h3>クラブ状態</h3>
+              <div id="clubStatus" class="stats"></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>直近の試合結果</h3>
+            <div id="latestResult" class="match-result">まだ試合はありません。</div>
+          </div>
+        </section>
+
+        <section id="tab-squad" class="tab-panel">
+          <div class="card">
+            <h3>所属選手</h3>
+            <div class="table-wrap">
+              <table id="squadTable"></table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-tactics" class="tab-panel">
+          <div class="grid two">
+            <div class="card">
+              <h3>フォーメーション</h3>
+              <select id="formationSelect"></select>
+              <p id="formationDesc" class="muted"></p>
+            </div>
+            <div class="card">
+              <h3>戦術</h3>
+              <select id="tacticSelect"></select>
+              <p id="tacticDesc" class="muted"></p>
+            </div>
+          </div>
+          <div class="card">
+            <h3>戦術成熟</h3>
+            <div id="tacticMaturity"></div>
+          </div>
+        </section>
+
+        <section id="tab-league" class="tab-panel">
+          <div class="card">
+            <h3>日本3部リーグ</h3>
+            <div class="table-wrap">
+              <table id="leagueTable"></table>
+            </div>
+          </div>
+        </section>
+
+        <section id="tab-market" class="tab-panel">
+          <div class="card">
+            <h3>補強候補</h3>
+            <p class="muted">v0.0.1では、候補選手を獲得できます。資金・年俸・人数上限の細かい制御は今後追加します。</p>
+            <div id="marketList" class="market-list"></div>
+          </div>
+        </section>
+
+        <section id="tab-log" class="tab-panel">
+          <div class="card">
+            <h3>クラブ日誌</h3>
+            <div id="logList" class="log-list"></div>
+          </div>
+        </section>
+      </main>
+    </section>
+  </div>
+  <script>
+(() => {
+  "use strict";
+
+  const cities = [
+    { name: "名古屋", tags: ["大都市", "工業"] },
+    { name: "豊田", tags: ["工業"] },
+    { name: "岡崎", tags: ["歴史"] },
+    { name: "沼津", tags: ["港町"] },
+    { name: "静岡", tags: ["温暖"] },
+    { name: "浜松", tags: ["工業", "温暖"] },
+    { name: "松本", tags: ["山"] },
+    { name: "長野", tags: ["山", "雪"] },
+    { name: "甲府", tags: ["山"] },
+    { name: "浦和", tags: ["大都市"] },
+    { name: "川崎", tags: ["大都市", "工業"] },
+    { name: "町田", tags: ["大都市"] },
+    { name: "横浜", tags: ["港町", "大都市"] },
+    { name: "鹿嶋", tags: ["地方"] },
+    { name: "札幌", tags: ["雪", "大都市"] },
+    { name: "仙台", tags: ["大都市"] },
+    { name: "京都", tags: ["歴史"] },
+    { name: "大阪", tags: ["大都市"] },
+    { name: "神戸", tags: ["港町"] },
+    { name: "広島", tags: ["港町"] },
+    { name: "福岡", tags: ["大都市", "港町"] },
+    { name: "熊本", tags: ["温暖"] },
+    { name: "鹿児島", tags: ["温暖"] },
+    { name: "金沢", tags: ["歴史", "雪"] }
+  ];
+
+  const teamNames = {
+    common: ["ユナイテッド", "ブレイブス", "アスレティック", "クラシックス", "フェニックス", "グリフォン", "ホーネッツ", "レオンズ", "ファルコンズ"],
+    港町: ["シーガルズ", "セイラーズ", "オルカーズ", "マリナーズ", "ブルーウェーブ"],
+    山: ["アルピンズ", "フォレスターズ", "マウンテンズ", "グリーンズ"],
+    工業: ["アイアンズ", "スチールズ", "ワーカーズ", "メカニクス"],
+    雪: ["スノウズ", "ブリザード", "ノーススターズ"],
+    温暖: ["サンズ", "オレンジズ", "ブルームズ"],
+    歴史: ["クラシックス", "パープルズ", "フェニックス"],
+    大都市: ["シティ", "メトロス", "レッドスターズ", "ブルーフロンツ"]
+  };
+
+  const clubTypes = {
+    local: { label: "地方育成クラブ", youth: 8, money: -5, support: 8, scout: 2, note: "地元密着。ユース・若手育成に少し強い。" },
+    fallen: { label: "元名門クラブ", youth: 4, money: 0, support: 15, scout: 3, note: "過去の人気が残るが、近年は低迷。" },
+    industrial: { label: "工業都市クラブ", youth: 2, money: 12, support: 3, scout: 3, note: "スポンサー収入がやや高く、フィジカル型が集まりやすい。" },
+    college: { label: "学園都市クラブ", youth: 5, money: -2, support: 2, scout: 10, note: "大卒即戦力の発見に強い。" },
+    port: { label: "港町クラブ", youth: 2, money: 3, support: 4, scout: 8, note: "外国人・レンタル候補の発見に少し強い。" }
+  };
+
+  const formations = [
+    { id: "442", name: "4-4-2", desc: "バランス型。大きな弱点が少なく、序盤の小クラブ向き。" },
+    { id: "4231", name: "4-2-3-1", desc: "守備安定＋トップ下活用。判断力の高いMFがいると強い。" },
+    { id: "433", name: "4-3-3", desc: "攻撃的。サイドの走力と攻撃力が重要。" },
+    { id: "352", name: "3-5-2", desc: "中盤支配型。WBの運動量とCBの判断が大切。" },
+    { id: "541", name: "5-4-1", desc: "守備重視。格上相手や残留争い向き。" }
+  ];
+
+  const tactics = [
+    { id: "balance", name: "バランス", desc: "安定型。相性差は少ないが、爆発力も少ない。", atk: 0, def: 0 },
+    { id: "counter", name: "堅守速攻", desc: "守って速く攻める。格上相手に強い。", atk: -2, def: 5 },
+    { id: "possession", name: "ポゼッション", desc: "ボール保持で主導権を握る。技術と判断が重要。", atk: 4, def: -1 },
+    { id: "press", name: "ハイプレス", desc: "前から奪う。走力とフィジカルが重要。", atk: 3, def: 1 },
+    { id: "wide", name: "サイド攻撃", desc: "サイド突破とクロス重視。俊足ウイング向き。", atk: 4, def: -2 },
+    { id: "longball", name: "ロングボール", desc: "大型FWとフィジカルを活かす。ハイプレス対策に強い。", atk: 2, def: 0 }
+  ];
+
+  const firstNames = ["大吾","勇真","蓮司","悠斗","颯真","拓海","慎吾","琉生","晃平","陽斗","晴翔","直樹","玲央","智久","保仁","一雅","和司","悠馬","修平","剛"];
+  const familyNames = ["森谷","松原","藤堂","杉森","片桐","神谷","久世","黒川","成瀬","三浦","田嶋","早坂","宮原","遠宮","三園","黒崎","大槻","佐伯","長瀬","風間"];
+  const foreignFirst = ["ジョアン","ルーカス","ディエゴ","マルコ","アレックス","ニコラ","ミラン","パブロ","イヴァン","ドラガン"];
+  const foreignLast = ["マテウス","バレット","サントス","ヴィエラ","ロペス","イリッチ","ラドミル","セラーノ","ペトロフ","ヴコヴィッチ"];
+
+  const playerTypes = [
+    { key:"veteran_legend", label:"元代表ベテラン", age:[36,42], pos:["FW","MF"], base:{ attack:66, defense:48, tech:76, speed:38, physical:56, decision:82, mental:88, popularity:86 }, potential:65, peak:[28,36], traits:["人気者","指導力","勝負強い"] },
+    { key:"veteran_playmaker", label:"左足司令塔", age:[34,39], pos:["MF"], base:{ attack:62, defense:52, tech:83, speed:35, physical:48, decision:88, mental:82, popularity:72 }, potential:70, peak:[27,35], traits:["戦術眼","技術特化","指導力"] },
+    { key:"physical_fw", label:"フィジカル決定力FW", age:[23,28], pos:["FW"], base:{ attack:76, defense:34, tech:58, speed:62, physical:82, decision:66, mental:69, popularity:58 }, potential:76, peak:[25,31], traits:["フィジカル","決定力","ポストプレー"] },
+    { key:"college_mf", label:"大卒即戦力MF", age:[22,24], pos:["MF"], base:{ attack:61, defense:62, tech:67, speed:63, physical:62, decision:68, mental:70, popularity:45 }, potential:74, peak:[26,31], traits:["即戦力","安定"] },
+    { key:"youth_tech", label:"ユース天才肌", age:[17,19], pos:["MF","FW"], base:{ attack:56, defense:38, tech:72, speed:64, physical:45, decision:48, mental:50, popularity:50 }, potential:88, peak:[24,31], traits:["素質","独創的"] },
+    { key:"loan_cb", label:"上位クラブ若手レンタル", age:[19,22], pos:["DF"], base:{ attack:35, defense:70, tech:58, speed:65, physical:70, decision:58, mental:58, popularity:38 }, potential:82, peak:[25,31], traits:["レンタル","伸びしろ"] },
+    { key:"speed_winger", label:"俊足サイド", age:[20,27], pos:["FW","MF"], base:{ attack:68, defense:43, tech:62, speed:84, physical:58, decision:56, mental:58, popularity:55 }, potential:75, peak:[23,29], traits:["俊足","波がある"] },
+    { key:"defender", label:"守備職人CB", age:[24,32], pos:["DF"], base:{ attack:32, defense:78, tech:52, speed:54, physical:78, decision:72, mental:74, popularity:42 }, potential:73, peak:[27,34], traits:["守備職人","堅実"] },
+    { key:"keeper", label:"足元のうまいGK", age:[22,31], pos:["GK"], base:{ attack:20, defense:75, tech:65, speed:44, physical:67, decision:70, mental:72, popularity:40 }, potential:74, peak:[28,36], traits:["GK","ビルドアップ"] },
+    { key:"foreign_fw", label:"外国人ストライカー", age:[24,31], pos:["FW"], base:{ attack:79, defense:28, tech:68, speed:66, physical:78, decision:63, mental:64, popularity:65 }, potential:77, peak:[26,32], traits:["助っ人","得点源"], foreign:true }
+  ];
+
+  let state = null;
+
+  const $ = (id) => document.getElementById(id);
+  const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const fmtMoney = (v) => `${v.toLocaleString()}万円`;
+
+  function makeName(foreign=false) {
+    if (foreign) return `${pick(foreignFirst)}・${pick(foreignLast)}`;
+    return `${pick(familyNames)} ${pick(firstNames)}`;
+  }
+
+  function genClubName(city) {
+    const candidates = [...teamNames.common];
+    city.tags.forEach(tag => {
+      if (teamNames[tag]) candidates.push(...teamNames[tag]);
+    });
+    return `${city.name}${pick(candidates)}`;
+  }
+
+  function genPlayer(typeKey=null, clubId=null) {
+    const t = typeKey ? playerTypes.find(x => x.key === typeKey) : pick(playerTypes);
+    const age = rand(t.age[0], t.age[1]);
+    const pos = pick(t.pos);
+    const mod = () => rand(-6, 6);
+    const stats = {};
+    for (const k of ["attack","defense","tech","speed","physical","decision","mental","popularity"]) {
+      stats[k] = clamp((t.base[k] ?? 50) + mod(), 20, 95);
+    }
+
+    const effort = rand(35, 95);
+    const selfCare = rand(35, 95);
+    const injuryResist = rand(35, 95);
+    const loyalty = rand(20, 90);
+    const teamwork = rand(25, 90);
+    const ambition = rand(20, 90);
+
+    let peakStart = rand(t.peak[0]-1, t.peak[0]+1);
+    let peakEnd = rand(t.peak[1]-1, t.peak[1]+1);
+    if (effort > 75) peakEnd += 1;
+    if (selfCare > 75) peakEnd += 1;
+    if (injuryResist < 40) peakEnd -= 1;
+    if (stats.tech > 78 || stats.decision > 78) peakEnd += 1;
+    if (stats.speed > 82 && stats.tech < 65) peakEnd -= 1;
+    peakEnd = Math.max(peakStart + 1, peakEnd);
+
+    const current = calcOverall({ pos, stats, age, peakStart, peakEnd });
+    const wage = Math.round((current * current / 120) + stats.popularity * 1.5 + rand(-20, 40));
+
+    return {
+      id: crypto.randomUUID(),
+      name: makeName(t.foreign),
+      pos,
+      age,
+      type: t.label,
+      traits: [...t.traits],
+      stats,
+      overall: current,
+      potential: clamp(t.potential + rand(-6, 8), 45, 95),
+      peakStart,
+      peakEnd,
+      declineSpeed: rand(1, 4),
+      effort,
+      selfCare,
+      injuryResist,
+      loyalty,
+      teamwork,
+      ambition,
+      wage: Math.max(120, wage),
+      contract: rand(1, 3),
+      clubId
+    };
+  }
+
+  function calcOverall(p) {
+    const s = p.stats;
+    let weights;
+    if (p.pos === "FW") weights = { attack: .28, tech: .16, speed: .15, physical: .16, decision: .15, mental: .10 };
+    else if (p.pos === "MF") weights = { attack: .16, defense: .14, tech: .23, speed: .10, physical: .10, decision: .19, mental: .08 };
+    else if (p.pos === "DF") weights = { defense: .30, speed: .10, physical: .20, decision: .20, tech: .08, mental: .12 };
+    else weights = { defense: .33, tech: .14, physical: .17, decision: .22, mental: .14 };
+
+    let base = 0;
+    for (const [k, w] of Object.entries(weights)) base += (s[k] || 50) * w;
+
+    let ageMod = 0;
+    if (p.age < p.peakStart) ageMod = -Math.min(8, (p.peakStart - p.age) * 1.4);
+    else if (p.age > p.peakEnd) ageMod = -Math.min(18, (p.age - p.peakEnd) * 1.8);
+    return Math.round(clamp(base + ageMod, 30, 95));
+  }
+
+  function genClub(city=null, typeKey=null, isUser=false) {
+    city = city || pick(cities);
+    let key = typeKey && typeKey !== "random" ? typeKey : pick(Object.keys(clubTypes));
+    const type = clubTypes[key];
+    return {
+      id: crypto.randomUUID(),
+      name: genClubName(city),
+      city: city.name,
+      typeKey: key,
+      typeLabel: type.label,
+      note: type.note,
+      isUser,
+      money: 8500 + type.money * 100 + rand(-600, 1000),
+      supporters: 2600 + type.support * 120 + rand(-500, 700),
+      youth: 35 + type.youth + rand(-4, 5),
+      scout: 35 + type.scout + rand(-4, 5),
+      training: 35 + rand(-4, 6),
+      stadium: 5000 + rand(-800, 1600),
+      tactic: "balance",
+      formation: "442",
+      tacticExp: { balance: 15, counter: 5, possession: 5, press: 5, wide: 5, longball: 5 },
+      players: [],
+      points: 0, win: 0, draw: 0, lose: 0, gf: 0, ga: 0
+    };
+  }
+
+  function resetLeagueStats() {
+    state.clubs.forEach(c => {
+      c.points = c.win = c.draw = c.lose = c.gf = c.ga = 0;
+    });
+  }
+
+  function initGame() {
+    const selectedCity = cities.find(c => c.name === $("homeCitySelect").value) || pick(cities);
+    const selectedType = $("clubTypeSelect").value;
+    const userClub = genClub(selectedCity, selectedType, true);
+
+    const used = new Set([selectedCity.name]);
+    const clubs = [userClub];
+    while (clubs.length < 12) {
+      const city = pick(cities);
+      if (used.has(city.name)) continue;
+      used.add(city.name);
+      clubs.push(genClub(city, null, false));
+    }
+
+    clubs.forEach(club => {
+      const squad = [];
+      const typeMix = ["physical_fw","college_mf","defender","keeper","speed_winger","veteran_playmaker","loan_cb","youth_tech"];
+      for (let i=0; i<24; i++) squad.push(genPlayer(pick(typeMix), club.id));
+      if (club.isUser) {
+        squad.push(genPlayer("veteran_legend", club.id));
+        squad.push(genPlayer("college_mf", club.id));
+      }
+      club.players = squad;
+    });
+
+    state = {
+      year: 2026,
+      month: 8,
+      round: 1,
+      maxRounds: 33,
+      userClubId: userClub.id,
+      clubs,
+      logs: [],
+      latestResult: "まだ試合はありません。",
+      market: Array.from({length: 8}, () => genPlayer(pick(["veteran_legend","physical_fw","college_mf","loan_cb","speed_winger","defender","foreign_fw"]), null))
+    };
+
+    addLog(`新クラブ「${userClub.name}」が発足しました。${userClub.note}`);
+    addLog(`リーグは8月開幕。昇格期限はありません。クラブのペースで歴史を作りましょう。`);
+    showGame();
+    render();
+  }
+
+  function userClub() {
+    return state.clubs.find(c => c.id === state.userClubId);
+  }
+
+  function teamPower(club) {
+    const players = [...club.players].sort((a,b) => b.overall - a.overall).slice(0, 11);
+    const avg = players.reduce((sum,p) => sum + p.overall, 0) / players.length;
+    const mental = players.reduce((sum,p) => sum + p.stats.mental, 0) / players.length;
+    const teamwork = players.reduce((sum,p) => sum + p.teamwork, 0) / players.length;
+    const maturity = club.tacticExp[club.tactic] || 0;
+    const tactic = tactics.find(t => t.id === club.tactic);
+    return avg + mental * .06 + teamwork * .05 + maturity * .08 + (tactic.atk + tactic.def) * .2;
+  }
+
+  function simulateMatch(a,b) {
+    const powerA = teamPower(a) + rand(-8,8) + 2;
+    const powerB = teamPower(b) + rand(-8,8);
+    let goalsA = Math.max(0, Math.round((powerA - 48) / 13 + rand(0,2) - rand(0,1)));
+    let goalsB = Math.max(0, Math.round((powerB - 49) / 13 + rand(0,2) - rand(0,1)));
+    if (Math.random() < 0.12) goalsA += 1;
+    if (Math.random() < 0.10) goalsB += 1;
+
+    a.gf += goalsA; a.ga += goalsB;
+    b.gf += goalsB; b.ga += goalsA;
+    if (goalsA > goalsB) { a.win++; b.lose++; a.points += 3; }
+    else if (goalsA < goalsB) { b.win++; a.lose++; b.points += 3; }
+    else { a.draw++; b.draw++; a.points++; b.points++; }
+
+    a.tacticExp[a.tactic] = clamp((a.tacticExp[a.tactic] || 0) + 1, 0, 100);
+    b.tacticExp[b.tactic] = clamp((b.tacticExp[b.tactic] || 0) + 1, 0, 100);
+
+    return { goalsA, goalsB, powerA, powerB };
+  }
+
+  function playRound() {
+    if (!state || state.round > state.maxRounds) return;
+    const clubs = [...state.clubs].sort((a,b) => a.name.localeCompare(b.name));
+    const user = userClub();
+    let userResultText = "";
+    for (let i=0; i<clubs.length; i += 2) {
+      const a = clubs[i], b = clubs[i+1];
+      const r = simulateMatch(a,b);
+      if (a.id === user.id || b.id === user.id) {
+        const us = a.id === user.id ? a : b;
+        const op = a.id === user.id ? b : a;
+        const ug = a.id === user.id ? r.goalsA : r.goalsB;
+        const og = a.id === user.id ? r.goalsB : r.goalsA;
+        let mood = ug > og ? "勝利" : ug < og ? "敗戦" : "引き分け";
+        const best = [...us.players].sort((x,y) => y.overall - x.overall)[0];
+        userResultText = `第${state.round}節　${us.name} ${ug}-${og} ${op.name}
+結果：${mood}
+注目：${best.name}（${best.type}）がチームを支えました。
+戦術「${tactics.find(t => t.id === us.tactic).name}」の成熟度が少し上がりました。`;
+        state.latestResult = userResultText;
+        addLog(`第${state.round}節：${op.name}戦は${ug}-${og}で${mood}。`);
+      }
+    }
+    state.round += 1;
+    if ((state.round-1) % 4 === 0) state.month += 1;
+    if (state.month > 12) { state.month = 1; state.year += 1; }
+    seasonIncome();
+    if (state.round > state.maxRounds) finishSeason();
+    render();
+  }
+
+  function seasonIncome() {
+    const club = userClub();
+    const attendance = Math.min(club.stadium, Math.round(club.supporters * (0.55 + Math.random() * .25)));
+    const matchIncome = Math.round(attendance * 0.018);
+    club.money += matchIncome;
+    club.supporters += rand(-10, 40) + club.win * 0;
+  }
+
+  function finishSeason() {
+    const ranking = sortedClubs();
+    const userRank = ranking.findIndex(c => c.id === state.userClubId) + 1;
+    const club = userClub();
+    const prize = Math.max(500, (13 - userRank) * 320);
+    club.money += prize;
+    const supportGain = Math.max(50, (13 - userRank) * 90);
+    club.supporters += supportGain;
+    addLog(`シーズン終了。${club.name}は${userRank}位。賞金${fmtMoney(prize)}、サポーター+${supportGain}人。`);
+    growPlayers();
+  }
+
+  function growPlayers() {
+    userClub().players.forEach(p => {
+      const before = p.overall;
+      if (p.age < p.peakStart) {
+        const gain = (p.effort + p.selfCare + p.potential) / 300;
+        for (const k of Object.keys(p.stats)) {
+          if (k !== "popularity") p.stats[k] = clamp(p.stats[k] + Math.random() * gain, 20, 95);
+        }
+      } else if (p.age > p.peakEnd) {
+        p.stats.speed = clamp(p.stats.speed - Math.random() * p.declineSpeed, 20, 95);
+        p.stats.physical = clamp(p.stats.physical - Math.random() * p.declineSpeed * .8, 20, 95);
+        p.stats.decision = clamp(p.stats.decision + Math.random() * .4, 20, 95);
+        p.stats.mental = clamp(p.stats.mental + Math.random() * .3, 20, 95);
+      }
+      p.age += 1;
+      p.contract -= 1;
+      p.overall = calcOverall(p);
+      if (p.overall > before + 1) addLog(`${p.name}が成長しました。総合${before}→${p.overall}。`);
+      if (p.age >= 35 && p.traits.includes("指導力")) addLog(`${p.name}は将来のスタッフ候補として注目されています。`);
+    });
+  }
+
+  function sortedClubs() {
+    return [...state.clubs].sort((a,b) => 
+      b.points - a.points || (b.gf-b.ga) - (a.gf-a.ga) || b.gf - a.gf
+    );
+  }
+
+  function addLog(text) {
+    if (!state) return;
+    state.logs.unshift({ text, date: `${state.year || 2026}年${state.month || 8}月` });
+    state.logs = state.logs.slice(0, 80);
+  }
+
+  function render() {
+    if (!state) return;
+    const club = userClub();
+    $("clubName").textContent = club.name;
+    $("clubSub").textContent = `${club.typeLabel} / 日本3部リーグ / ${state.year}年${state.month}月 / 第${Math.min(state.round, state.maxRounds)}節`;
+    $("moneyText").textContent = fmtMoney(club.money);
+    $("supportersText").textContent = `${club.supporters.toLocaleString()}人`;
+    $("nextMatchText").textContent = state.round > state.maxRounds ? "シーズン終了。次バージョンで翌年処理を強化します。" : `第${state.round}節が控えています。`;
+    $("latestResult").textContent = state.latestResult;
+    $("playNextBtn").disabled = state.round > state.maxRounds;
+    $("skipMonthBtn").disabled = state.round > state.maxRounds;
+    $("seasonEndBtn").disabled = state.round > state.maxRounds;
+
+    $("clubStatus").innerHTML = [
+      ["クラブタイプ", club.typeLabel],
+      ["練習場", club.training],
+      ["ユース", club.youth],
+      ["スカウト", club.scout],
+      ["スタジアム", `${club.stadium.toLocaleString()}人`],
+      ["現在戦術", tactics.find(t => t.id === club.tactic).name],
+      ["現在順位", `${sortedClubs().findIndex(c => c.id === club.id)+1}位`]
+    ].map(([a,b]) => `<div class="stat-row"><span>${a}</span><strong>${b}</strong></div>`).join("");
+
+    renderSquad();
+    renderLeague();
+    renderTactics();
+    renderMarket();
+    renderLogs();
+  }
+
+  function renderSquad() {
+    const rows = [...userClub().players].sort((a,b) => b.overall - a.overall).map(p => `
+      <tr>
+        <td>${p.name}</td><td>${p.pos}</td><td>${p.age}</td><td><span class="badge">${p.type}</span></td>
+        <td>${p.overall}</td><td>${p.potential}</td><td>${p.peakStart}〜${p.peakEnd}歳</td>
+        <td>${p.traits.join("・")}</td><td>${fmtMoney(p.wage)}</td><td>${p.contract}年</td>
+      </tr>`).join("");
+    $("squadTable").innerHTML = `
+      <thead><tr><th>名前</th><th>位置</th><th>年齢</th><th>タイプ</th><th>総合</th><th>素質</th><th>ピーク</th><th>特徴</th><th>年俸</th><th>契約</th></tr></thead>
+      <tbody>${rows}</tbody>`;
+  }
+
+  function renderLeague() {
+    const rows = sortedClubs().map((c, i) => `
+      <tr>
+        <td>${i+1}</td><td>${c.name}${c.isUser ? " ★" : ""}</td><td>${c.points}</td><td>${c.win}</td><td>${c.draw}</td><td>${c.lose}</td><td>${c.gf}</td><td>${c.ga}</td><td>${c.gf-c.ga}</td>
+      </tr>`).join("");
+    $("leagueTable").innerHTML = `
+      <thead><tr><th>順位</th><th>クラブ</th><th>勝点</th><th>勝</th><th>分</th><th>敗</th><th>得</th><th>失</th><th>差</th></tr></thead>
+      <tbody>${rows}</tbody>`;
+  }
+
+  function renderTactics() {
+    const club = userClub();
+    $("formationSelect").value = club.formation;
+    $("tacticSelect").value = club.tactic;
+    $("formationDesc").textContent = formations.find(f => f.id === club.formation).desc;
+    $("tacticDesc").textContent = tactics.find(t => t.id === club.tactic).desc;
+    $("tacticMaturity").innerHTML = tactics.map(t => {
+      const v = club.tacticExp[t.id] || 0;
+      return `<div class="stat-row"><span>${t.name}</span><strong>${v}/100</strong></div>`;
+    }).join("");
+  }
+
+  function renderMarket() {
+    $("marketList").innerHTML = state.market.map(p => `
+      <div class="market-card">
+        <div class="row"><strong>${p.name}</strong><span class="badge">${p.type}</span></div>
+        <div>${p.age}歳 / ${p.pos} / 総合${p.overall} / 素質${p.potential} / ピーク${p.peakStart}〜${p.peakEnd}歳</div>
+        <div class="muted">特徴：${p.traits.join("・")} / 想定年俸：${fmtMoney(p.wage)}</div>
+        <button data-sign="${p.id}" class="primary">獲得する</button>
+      </div>
+    `).join("");
+    document.querySelectorAll("[data-sign]").forEach(btn => {
+      btn.addEventListener("click", () => signPlayer(btn.dataset.sign));
+    });
+  }
+
+  function signPlayer(id) {
+    const p = state.market.find(x => x.id === id);
+    if (!p) return;
+    const club = userClub();
+    if (club.money < p.wage) {
+      alert("資金が足りません。");
+      return;
+    }
+    club.money -= p.wage;
+    p.clubId = club.id;
+    club.players.push(p);
+    state.market = state.market.filter(x => x.id !== id);
+    addLog(`${p.name}を獲得しました。${p.type}としてチームに加わります。`);
+    render();
+  }
+
+  function renderLogs() {
+    $("logList").innerHTML = state.logs.map(l => `<div class="log-item"><strong>${l.date}</strong><br>${l.text}</div>`).join("");
+  }
+
+  function showGame() {
+    $("startScreen").classList.remove("active");
+    $("gameScreen").classList.add("active");
+  }
+
+  function showStart() {
+    $("gameScreen").classList.remove("active");
+    $("startScreen").classList.add("active");
+  }
+
+  function setup() {
+    $("homeCitySelect").innerHTML = cities.map(c => `<option value="${c.name}">${c.name}</option>`).join("");
+    $("formationSelect").innerHTML = formations.map(f => `<option value="${f.id}">${f.name}</option>`).join("");
+    $("tacticSelect").innerHTML = tactics.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+
+    $("startBtn").addEventListener("click", initGame);
+    $("newGameBtn").addEventListener("click", () => {
+      if (!state || confirm("現在のデータを破棄して新しく始めますか？")) {
+        state = null;
+        showStart();
+      }
+    });
+    $("playNextBtn").addEventListener("click", playRound);
+    $("skipMonthBtn").addEventListener("click", () => {
+      for (let i=0; i<4 && state.round <= state.maxRounds; i++) playRound();
+    });
+    $("seasonEndBtn").addEventListener("click", () => {
+      while (state.round <= state.maxRounds) playRound();
+    });
+
+    document.querySelectorAll(".tab").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        $(`tab-${btn.dataset.tab}`).classList.add("active");
+      });
+    });
+
+    $("formationSelect").addEventListener("change", e => {
+      userClub().formation = e.target.value;
+      addLog(`フォーメーションを${formations.find(f => f.id === e.target.value).name}に変更しました。`);
+      render();
+    });
+    $("tacticSelect").addEventListener("change", e => {
+      userClub().tactic = e.target.value;
+      addLog(`戦術を${tactics.find(t => t.id === e.target.value).name}に変更しました。`);
+      render();
+    });
+  }
+
+  setup();
+})();
+
+  </script>
+</body>
+</html>
