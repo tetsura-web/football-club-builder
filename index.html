@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>育成が楽しいサッカークラブ運営ゲーム v0.0.5</title>
+<title>育成が楽しいサッカークラブ運営ゲーム v0.0.6</title>
 <style>
-:root{--bg:#f3f7f2;--card:#fff;--text:#1e2a22;--muted:#66736a;--line:#dce6dc;--main:#2fa84f;--main-dark:#1f7c3a;--bad:#b33a3a;--shadow:0 8px 24px rgba(30,70,40,.10)}
+:root{--bg:#f3f7f2;--card:#fff;--text:#1e2a22;--muted:#66736a;--line:#dce6dc;--main:#2fa84f;--main-dark:#1f7c3a;--bad:#b33a3a;--warn:#a05a00;--shadow:0 8px 24px rgba(30,70,40,.10)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","Yu Gothic UI",Meiryo,sans-serif}
 button,select,input{font:inherit}
@@ -28,214 +28,239 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
 .tabs{position:sticky;top:58px;z-index:9;display:flex;gap:8px;overflow-x:auto;padding:9px 0 13px;background:var(--bg)}
 .tab{white-space:nowrap;border-radius:999px}.tab.active{background:var(--main-dark);color:#fff;border-color:var(--main-dark)}
 .tab-panel{display:none}.tab-panel.active{display:block}
-.grid{display:grid;gap:14px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .card{background:#fff;border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
 .card h3{margin:0 0 14px;font-size:22px}.actions{display:flex;flex-wrap:wrap;gap:9px}
-.stats{display:grid;gap:8px}.stat-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.stat-row strong{text-align:right}
+.grid{display:grid;gap:14px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.stat-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.stat-row strong{text-align:right}
 .match-result{line-height:1.8;white-space:pre-wrap}
-.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:820px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:13px;vertical-align:middle}th{color:var(--muted);font-weight:900;background:#f8fbf8}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:860px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:13px;vertical-align:middle}th{color:var(--muted);font-weight:900;background:#f8fbf8}
 .badge{display:inline-block;padding:3px 7px;border-radius:999px;font-size:12px;background:#edf7ed;color:var(--main-dark);border:1px solid #cbe8ce}
+.warnbox{padding:12px;background:#fff8e9;border:1px solid #f0d199;border-radius:14px;color:#714600;line-height:1.6;font-weight:800}
+.goodbox{padding:12px;background:#edf7ed;border:1px solid #cbe8ce;border-radius:14px;color:#1f7c3a;line-height:1.6;font-weight:800}
 .lineup-summary{display:grid;gap:8px;margin:12px 0;padding:12px;background:#f8fbf8;border-radius:14px;border:1px solid var(--line)}
 .market-list{display:grid;gap:10px}.market-card{border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:7px}.market-card .row{display:flex;justify-content:space-between;gap:8px}
+.segment{display:flex;gap:8px;overflow-x:auto;margin:10px 0}.segment button{white-space:nowrap;border-radius:999px}.segment button.activeChoice{background:var(--main-dark);color:#fff}
+.formation-board{display:grid;gap:10px;background:#e8f3e8;border:1px solid #d1e6d1;border-radius:18px;padding:14px;margin:12px 0}
+.line-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.player-chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 10px;font-size:12px;box-shadow:0 3px 10px rgba(0,0,0,.05)}
 .log-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow:auto}.log-item{padding:12px;border-left:4px solid var(--main);background:#f8fbf8;border-radius:12px;line-height:1.6}
-.warn{color:#a05a00;font-weight:800}
+.bigup{color:#16823a;font-weight:900}.bigdown{color:#b33a3a;font-weight:900}.warn{color:#a05a00;font-weight:800}
 @media(max-width:720px){
   .club-header{flex-direction:column}.grid.two{grid-template-columns:1fr}.hero{margin:10px auto;padding:18px}.hero h1{font-size:24px}.tabs{top:55px}.screen{padding:12px}.club-header h2{font-size:25px}
-  table{min-width:760px}th,td{font-size:12px}.topbar{align-items:flex-start}
+  table{min-width:800px}th,td{font-size:12px}.topbar{align-items:flex-start}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <header class="topbar">
-    <div><div class="game-title">育成が楽しいサッカークラブ運営ゲーム</div><div class="version">v0.0.5 / ブラウザ試作版</div></div>
-    <div class="top-actions"><button id="saveBtn" class="ghost">保存</button><button id="loadBtn" class="ghost">読込</button><button id="newGameBtn" class="ghost">新しく始める</button></div>
-  </header>
+<header class="topbar">
+  <div><div class="game-title">育成が楽しいサッカークラブ運営ゲーム</div><div class="version">v0.0.7 / ブラウザ試作版</div></div>
+  <div class="top-actions"><button id="saveBtn" class="ghost">保存</button><button id="loadBtn" class="ghost">読込</button><button id="newGameBtn" class="ghost">新しく始める</button></div>
+</header>
 
-  <section id="startScreen" class="screen active">
-    <div class="hero">
-      <h1>小さなクラブを、時間をかけて育てる。</h1>
-      <p>v0.0.5では、開始ボタンが動かない問題を回避するため起動画面を作り直しました。本拠地とクラブ名は自動生成され、編集したい場合だけ書き換えられます。</p>
-      <div class="setup-card">
-        <label>代表クラブの本拠地</label>
-        <select id="citySelect"></select>
-        <label>本拠地を自由入力する場合</label>
-        <input id="cityInput" placeholder="空欄なら上の本拠地を使用">
-        <label>クラブ名</label>
-        <input id="clubInput" placeholder="空欄なら自動生成">
-        <div class="actions"><button id="rerollBtn">本拠地・クラブ名を再生成</button></div>
-        <label>クラブタイプ</label>
-        <select id="typeSelect">
-          <option value="random">おまかせ</option><option value="local">地方育成クラブ</option><option value="fallen">元名門クラブ</option>
-          <option value="industrial">工業都市クラブ</option><option value="college">学園都市クラブ</option><option value="port">港町クラブ</option>
-        </select>
-        <button id="startBtn" class="primary">クラブを作って開始</button>
-      </div>
+<section id="startScreen" class="screen active">
+  <div class="hero">
+    <h1>小さなクラブを、時間をかけて育てる。</h1>
+    <p>v0.0.7では、4-4-2以外のフォーメーションも複数パターン化し、育成を月次ではなく日次自動実行に変更しました。</p>
+    <div class="setup-card">
+      <label>代表クラブの本拠地</label><select id="citySelect"></select>
+      <label>本拠地を自由入力する場合</label><input id="cityInput" placeholder="空欄なら上の本拠地を使用">
+      <label>クラブ名</label><input id="clubInput" placeholder="空欄なら自動生成">
+      <div class="actions"><button id="rerollBtn">本拠地・クラブ名を再生成</button></div>
+      <label>クラブタイプ</label>
+      <select id="typeSelect"><option value="random">おまかせ</option><option value="local">地方育成クラブ</option><option value="fallen">元名門クラブ</option><option value="industrial">工業都市クラブ</option><option value="college">学園都市クラブ</option><option value="port">港町クラブ</option><option value="big">元ビッグクラブ</option></select>
+      <button id="startBtn" class="primary">クラブを作って開始</button>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="gameScreen" class="screen">
-    <div class="club-header">
-      <div><h2 id="clubName"></h2><div id="clubSub" class="muted"></div></div>
-      <div class="club-money">
-        <div>順位 <strong id="rankNow"></strong> <span id="rankDelta" class="delta"></span></div>
-        <div>資金 <strong id="money"></strong> <span id="moneyDelta" class="delta"></span></div>
-        <div>サポーター <strong id="supporters"></strong> <span id="supporterDelta" class="delta"></span></div>
-      </div>
+<section id="gameScreen" class="screen">
+  <div class="club-header">
+    <div><h2 id="clubName"></h2><div id="clubSub" class="muted"></div></div>
+    <div class="club-money">
+      <div>順位 <strong id="rankNow"></strong> <span id="rankDelta" class="delta"></span></div>
+      <div>資金 <strong id="money"></strong> <span id="moneyDelta" class="delta"></span></div>
+      <div>サポーター <strong id="supporters"></strong> <span id="supporterDelta" class="delta"></span></div>
     </div>
-    <nav class="tabs">
-      <button data-tab="home" class="tab active">ホーム</button><button data-tab="lineup" class="tab">編成</button><button data-tab="squad" class="tab">選手</button>
-      <button data-tab="tactics" class="tab">戦術</button><button data-tab="training" class="tab">育成</button><button data-tab="league" class="tab">順位</button><button data-tab="market" class="tab">補強</button><button data-tab="log" class="tab">日誌</button>
-    </nav>
+  </div>
 
-    <main>
-      <section id="tab-home" class="tab-panel active">
-        <div class="grid two">
-          <div class="card"><h3>次の行動</h3><p id="nextText" class="large"></p><div class="actions"><button id="playBtn" class="primary">次の試合へ</button><button id="monthBtn">1か月進める</button><button id="endBtn">シーズン最後まで</button><button id="nextSeasonBtn" style="display:none">翌シーズンへ</button></div></div>
-          <div class="card"><h3>クラブ状態</h3><div id="statusBox" class="stats"></div></div>
+  <nav class="tabs">
+    <button data-tab="home" class="tab active">ホーム</button><button data-tab="lineup" class="tab">編成</button><button data-tab="squad" class="tab">選手</button>
+    <button data-tab="tactics" class="tab">戦術</button><button data-tab="training" class="tab">育成</button><button data-tab="league" class="tab">順位</button><button data-tab="market" class="tab">補強</button><button data-tab="log" class="tab">日誌</button>
+  </nav>
+
+  <main>
+    <section id="tab-home" class="tab-panel active">
+      <div id="deadlineBox"></div>
+      <div class="grid two">
+        <div class="card"><h3>次の行動</h3><p id="nextText" class="large"></p><div class="actions"><button id="playBtn" class="primary">次の試合へ</button><button id="monthBtn">1か月進める</button><button id="endBtn">シーズン最後まで</button><button id="nextSeasonBtn" style="display:none">翌シーズンへ</button></div></div>
+        <div class="card"><h3>クラブ状態</h3><div id="statusBox"></div></div>
+      </div>
+      <div class="card"><h3>直近の試合結果</h3><div id="latestBox" class="match-result">まだ試合はありません。</div></div>
+    </section>
+
+    <section id="tab-lineup" class="tab-panel">
+      <div class="card">
+        <h3>編成</h3>
+        <p class="muted">おすすめ編成は3種類。手動で入れ替えるまで勝手には変えません。交代は試合中に自動方針で行います。</p>
+        <div class="actions">
+          <button id="autoNowBtn" class="primary">実力重視</button><button id="autoBalanceBtn">バランス</button><button id="autoYouthBtn">若手中心</button><button id="clearLineupBtn">全員ベンチ外</button>
         </div>
-        <div class="card"><h3>直近の試合結果</h3><div id="latestBox" class="match-result">まだ試合はありません。</div></div>
-      </section>
+        <label style="display:block;margin-top:12px;font-weight:800;color:var(--muted)">交代方針</label>
+        <select id="subPolicySelect"><option value="none">交代しない</option><option value="normal">普通</option><option value="active">積極的</option></select>
+        <div id="lineupSummary" class="lineup-summary"></div>
+        <div class="formation-board" id="formationBoard"></div>
+        <div class="table-wrap"><table id="lineupTable"></table></div>
+      </div>
+    </section>
 
-      <section id="tab-lineup" class="tab-panel">
-        <div class="card">
-          <h3>スタメン・ベンチ選択</h3>
-          <p class="muted">フォーメーション順に、GK → DF → MF → FWで表示します。まずは「おすすめ選出」でOKです。</p>
-          <div class="actions"><button id="autoLineupBtn" class="primary">おすすめ選出</button><button id="clearLineupBtn">全員ベンチ外</button></div>
-          <div id="lineupSummary" class="lineup-summary"></div>
-          <div class="table-wrap"><table id="lineupTable"></table></div>
+    <section id="tab-squad" class="tab-panel"><div class="card"><h3>所属選手</h3><div class="table-wrap"><table id="squadTable"></table></div></div></section>
+
+    <section id="tab-tactics" class="tab-panel">
+      <div class="grid two">
+        <div class="card"><h3>フォーメーション</h3><select id="formationSelect"></select><p id="formationDesc" class="muted"></p></div>
+        <div class="card"><h3>戦術</h3><select id="tacticSelect"></select><p id="tacticDesc" class="muted"></p></div>
+      </div>
+      <div class="card"><h3>戦術成熟</h3><div id="tacticMaturity"></div></div>
+    </section>
+
+    <section id="tab-training" class="tab-panel">
+      <div class="card">
+        <h3>育成</h3>
+        <p class="muted">育成方針は日ごとに適用されます。試合・月進行・シーズン進行時に、未実行の日数分を自動処理します。</p>
+        <label>育成方針</label>
+        <select id="trainingSelect"><option value="auto">おまかせ</option><option value="attack">攻撃重点</option><option value="defense">守備重点</option><option value="tech">技術重点</option><option value="physical">フィジカル重点</option><option value="youth">若手重点</option></select>
+        <div class="actions" style="margin-top:10px"><button id="trainBtn" class="primary">今日の育成を実行</button></div>
+      </div>
+      <div class="card"><h3>最近の成長・低下</h3><div id="growthBox" class="log-list"></div></div>
+    </section>
+
+    <section id="tab-league" class="tab-panel"><div class="card"><h3>日本3部リーグ</h3><div class="table-wrap"><table id="leagueTable"></table></div></div></section>
+
+    <section id="tab-market" class="tab-panel">
+      <div class="card">
+        <h3>補強候補</h3>
+        <div id="marketWarning"></div>
+        <div class="segment">
+          <button data-market="all" class="activeChoice">一覧</button><button data-market="free">自由契約</button><button data-market="student">学生</button><button data-market="youth">ユース昇格</button><button data-market="club">他チーム</button>
         </div>
-      </section>
+        <div class="actions"><button id="refreshScoutBtn" class="primary">スカウトリスト更新</button></div>
+        <p id="marketNote" class="muted"></p>
+        <div id="marketList" class="market-list"></div>
+      </div>
+    </section>
 
-      <section id="tab-squad" class="tab-panel"><div class="card"><h3>所属選手</h3><div class="table-wrap"><table id="squadTable"></table></div></div></section>
-
-      <section id="tab-tactics" class="tab-panel">
-        <div class="grid two">
-          <div class="card"><h3>フォーメーション</h3><select id="formationSelect"></select><p id="formationDesc" class="muted"></p></div>
-          <div class="card"><h3>戦術</h3><select id="tacticSelect"></select><p id="tacticDesc" class="muted"></p></div>
-        </div>
-        <div class="card"><h3>戦術成熟</h3><div id="tacticMaturity"></div></div>
-      </section>
-
-      <section id="tab-training" class="tab-panel">
-        <div class="card">
-          <h3>育成</h3>
-          <p class="muted">月1回、育成方針を実行できます。今後、個別育成・コーチ・施設効果を増やします。</p>
-          <select id="trainingSelect">
-            <option value="attack">攻撃重点</option><option value="defense">守備重点</option><option value="tech">技術重点</option><option value="physical">フィジカル重点</option><option value="youth">若手重点</option>
-          </select>
-          <div class="actions" style="margin-top:10px"><button id="trainBtn" class="primary">今月の育成を実行</button></div>
-        </div>
-      </section>
-
-      <section id="tab-league" class="tab-panel"><div class="card"><h3>日本3部リーグ</h3><div class="table-wrap"><table id="leagueTable"></table></div></div></section>
-      <section id="tab-market" class="tab-panel"><div class="card"><h3>補強候補</h3><p id="marketNote" class="muted"></p><div id="marketList" class="market-list"></div></div></section>
-      <section id="tab-log" class="tab-panel"><div class="card"><h3>クラブ日誌</h3><div id="logList" class="log-list"></div></div></section>
-    </main>
-  </section>
+    <section id="tab-log" class="tab-panel"><div class="card"><h3>クラブ日誌</h3><div id="logList" class="log-list"></div></div></section>
+  </main>
+</section>
 </div>
 
 <script>
 (function(){
 "use strict";
-
 const cities=[
-{name:"名古屋",tags:["大都市","工業"]},{name:"豊田",tags:["工業"]},{name:"岡崎",tags:["歴史"]},{name:"沼津",tags:["港町"]},{name:"静岡",tags:["温暖"]},{name:"浜松",tags:["工業","温暖"]},{name:"松本",tags:["山"]},{name:"長野",tags:["山","雪"]},{name:"甲府",tags:["山"]},{name:"浦和",tags:["大都市"]},{name:"川崎",tags:["大都市","工業"]},{name:"町田",tags:["大都市"]},{name:"横浜",tags:["港町","大都市"]},{name:"鹿嶋",tags:["地方"]},{name:"札幌",tags:["雪","大都市"]},{name:"仙台",tags:["大都市"]},{name:"京都",tags:["歴史"]},{name:"大阪",tags:["大都市"]},{name:"神戸",tags:["港町"]},{name:"広島",tags:["港町"]},{name:"福岡",tags:["大都市","港町"]},{name:"熊本",tags:["温暖"]},{name:"鹿児島",tags:["温暖"]},{name:"金沢",tags:["歴史","雪"]}];
+{name:"名古屋",tags:["大都市","工業"],passion:72,patience:55},{name:"豊田",tags:["工業"],passion:58,patience:70},{name:"岡崎",tags:["歴史"],passion:62,patience:66},{name:"沼津",tags:["港町"],passion:55,patience:72},{name:"静岡",tags:["温暖"],passion:65,patience:60},{name:"浜松",tags:["工業","温暖"],passion:60,patience:64},{name:"松本",tags:["山"],passion:82,patience:52},{name:"長野",tags:["山","雪"],passion:70,patience:62},{name:"甲府",tags:["山"],passion:68,patience:63},{name:"浦和",tags:["大都市"],passion:90,patience:38},{name:"川崎",tags:["大都市","工業"],passion:74,patience:54},{name:"町田",tags:["大都市"],passion:69,patience:57},{name:"横浜",tags:["港町","大都市"],passion:76,patience:50},{name:"鹿嶋",tags:["地方"],passion:78,patience:56},{name:"札幌",tags:["雪","大都市"],passion:80,patience:58},{name:"仙台",tags:["大都市"],passion:75,patience:60},{name:"京都",tags:["歴史"],passion:66,patience:68},{name:"大阪",tags:["大都市"],passion:86,patience:42},{name:"神戸",tags:["港町"],passion:73,patience:53},{name:"広島",tags:["港町"],passion:70,patience:68},{name:"福岡",tags:["大都市","港町"],passion:78,patience:48},{name:"熊本",tags:["温暖"],passion:72,patience:64},{name:"鹿児島",tags:["温暖"],passion:76,patience:60},{name:"金沢",tags:["歴史","雪"],passion:60,patience:72}];
 const teamNames={common:["ユナイテッド","ブレイブス","アスレティック","クラシックス","フェニックス","グリフォン","ホーネッツ","レオンズ","ファルコンズ"],港町:["シーガルズ","セイラーズ","オルカーズ","マリナーズ"],山:["アルピンズ","フォレスターズ","マウンテンズ"],工業:["アイアンズ","スチールズ","ワーカーズ"],雪:["スノウズ","ブリザード"],温暖:["サンズ","オレンジズ","ブルームズ"],歴史:["クラシックス","パープルズ","フェニックス"],大都市:["シティ","メトロス","レッドスターズ","ブルーフロンツ"]};
-const clubTypes={local:{label:"地方育成クラブ",youth:8,money:-5,support:8,scout:2,note:"地元密着。ユース・若手育成に少し強い。"},fallen:{label:"元名門クラブ",youth:4,money:0,support:15,scout:3,note:"過去の人気が残るが、近年は低迷。"},industrial:{label:"工業都市クラブ",youth:2,money:12,support:3,scout:3,note:"スポンサー収入がやや高く、フィジカル型が集まりやすい。"},college:{label:"学園都市クラブ",youth:5,money:-2,support:2,scout:10,note:"大卒即戦力の発見に強い。"},port:{label:"港町クラブ",youth:2,money:3,support:4,scout:8,note:"外国人・レンタル候補の発見に少し強い。"}};
+const clubTypes={local:{label:"地方育成クラブ",youth:8,money:-5,support:8,scout:2,goal:"残留",expect:9,note:"地元密着。ユース・若手育成に少し強い。"},fallen:{label:"元名門クラブ",youth:4,money:0,support:15,scout:3,goal:"昇格争い",expect:4,note:"過去の人気が残るが、近年は低迷。"},industrial:{label:"工業都市クラブ",youth:2,money:12,support:3,scout:3,goal:"中位以上",expect:7,note:"スポンサー収入がやや高く、フィジカル型が集まりやすい。"},college:{label:"学園都市クラブ",youth:5,money:-2,support:2,scout:10,goal:"残留",expect:10,note:"大卒即戦力の発見に強い。"},port:{label:"港町クラブ",youth:2,money:3,support:4,scout:8,goal:"中位以上",expect:8,note:"外国人・レンタル候補の発見に少し強い。"},big:{label:"元ビッグクラブ",youth:4,money:8,support:25,scout:5,goal:"優勝争い",expect:2,note:"期待が大きく、勝てば伸びるが不満も溜まりやすい。"}};
 const formations=[
-{id:"442",name:"4-4-2",need:{GK:1,DF:4,MF:4,FW:2},desc:"バランス型。大きな弱点が少なく、序盤の小クラブ向き。"},
-{id:"4231",name:"4-2-3-1",need:{GK:1,DF:4,MF:5,FW:1},desc:"守備安定＋トップ下活用。判断力の高いMFがいると強い。"},
-{id:"433",name:"4-3-3",need:{GK:1,DF:4,MF:3,FW:3},desc:"攻撃的。サイドの走力と攻撃力が重要。"},
-{id:"352",name:"3-5-2",need:{GK:1,DF:3,MF:5,FW:2},desc:"中盤支配型。WBの運動量とCBの判断が大切。"},
-{id:"541",name:"5-4-1",need:{GK:1,DF:5,MF:4,FW:1},desc:"守備重視。格上相手や残留争い向き。"}];
-const tactics=[
-{id:"balance",name:"バランス",desc:"安定型。相性差は少ないが、爆発力も少ない。",atk:0,def:0},
-{id:"counter",name:"堅守速攻",desc:"守って速く攻める。格上相手に強い。",atk:-2,def:5},
-{id:"possession",name:"ポゼッション",desc:"ボール保持で主導権を握る。技術と判断が重要。",atk:4,def:-1},
-{id:"press",name:"ハイプレス",desc:"前から奪う。走力とフィジカルが重要。",atk:3,def:1},
-{id:"wide",name:"サイド攻撃",desc:"サイド突破とクロス重視。俊足ウイング向き。",atk:4,def:-2},
-{id:"longball",name:"ロングボール",desc:"大型FWとフィジカルを活かす。ハイプレス対策に強い。",atk:2,def:0}];
-const roots=[
-{id:"japan",name:"日本",style:"jp",w:55,bias:{decision:2,teamwork:3,tech:1}},
-{id:"east_asia",name:"東アジア",style:"foreign",w:7,bias:{speed:2,decision:2,tech:1}},
-{id:"southeast_asia",name:"東南アジア",style:"foreign",w:5,bias:{speed:3,tech:1,mental:1}},
-{id:"europe",name:"欧州",style:"foreign",w:9,bias:{tech:2,decision:2,physical:1}},
-{id:"south_america",name:"南米",style:"foreign",w:8,bias:{attack:3,tech:3,popularity:2}},
-{id:"africa",name:"アフリカ",style:"foreign",w:7,bias:{speed:4,physical:4,attack:1}},
-{id:"mixed_japan",name:"日本ルーツMIX",style:"half",w:9,bias:{speed:2,physical:1,tech:1,popularity:1}}];
-const fn=["大吾","勇真","蓮司","悠斗","颯真","拓海","慎吾","琉生","晃平","陽斗","晴翔","直樹","玲央","智久","保仁","一雅","和司","悠馬","修平","剛"];
-const ln=["森谷","松原","藤堂","杉森","片桐","神谷","久世","黒川","成瀬","三浦","田嶋","早坂","宮原","遠宮","三園","黒崎","大槻","佐伯","長瀬","風間"];
-const ff=["ジョアン","ルーカス","ディエゴ","マルコ","アレックス","ニコラ","ミラン","パブロ","イヴァン","ドラガン"];
-const fl=["マテウス","バレット","サントス","ヴィエラ","ロペス","イリッチ","ラドミル","セラーノ","ペトロフ","ヴコヴィッチ"];
-const playerTypes=[
-{key:"veteran_legend",label:"元代表ベテラン",age:[36,42],pos:["FW","MF"],base:{attack:68,defense:48,tech:78,speed:38,physical:56,decision:84,mental:88,popularity:88},potential:65,peak:[28,36],traits:["人気者","指導力","勝負強い"],wage:[700,1600]},
-{key:"veteran_playmaker",label:"左足司令塔",age:[34,39],pos:["MF"],base:{attack:62,defense:52,tech:84,speed:35,physical:48,decision:88,mental:82,popularity:74},potential:70,peak:[27,35],traits:["戦術眼","技術特化","指導力"],wage:[500,1100]},
-{key:"physical_fw",label:"フィジカル決定力FW",age:[23,28],pos:["FW"],base:{attack:76,defense:34,tech:58,speed:62,physical:82,decision:66,mental:69,popularity:58},potential:76,peak:[25,31],traits:["フィジカル","決定力","ポストプレー"],wage:[350,900]},
-{key:"college_mf",label:"大卒即戦力MF",age:[22,24],pos:["MF"],base:{attack:61,defense:62,tech:67,speed:63,physical:62,decision:68,mental:70,popularity:45},potential:74,peak:[26,31],traits:["即戦力","安定"],wage:[240,520]},
-{key:"youth_tech",label:"ユース天才肌",age:[17,19],pos:["MF","FW"],base:{attack:56,defense:38,tech:72,speed:64,physical:45,decision:48,mental:50,popularity:50},potential:88,peak:[24,31],traits:["素質","独創的"],wage:[120,300]},
-{key:"loan_cb",label:"上位クラブ若手レンタル",age:[19,22],pos:["DF"],base:{attack:35,defense:70,tech:58,speed:65,physical:70,decision:58,mental:58,popularity:38},potential:82,peak:[25,31],traits:["レンタル","伸びしろ"],wage:[0,250]},
-{key:"speed_winger",label:"俊足サイド",age:[20,27],pos:["FW","MF"],base:{attack:68,defense:43,tech:62,speed:84,physical:58,decision:56,mental:58,popularity:55},potential:75,peak:[23,29],traits:["俊足","波がある"],wage:[260,650]},
-{key:"defender",label:"守備職人CB",age:[24,32],pos:["DF"],base:{attack:32,defense:78,tech:52,speed:54,physical:78,decision:72,mental:74,popularity:42},potential:73,peak:[27,34],traits:["守備職人","堅実"],wage:[300,760]},
-{key:"keeper",label:"足元のうまいGK",age:[22,31],pos:["GK"],base:{attack:20,defense:75,tech:65,speed:44,physical:67,decision:70,mental:72,popularity:40},potential:74,peak:[28,36],traits:["GK","ビルドアップ"],wage:[280,700]},
-{key:"striker",label:"決定力ストライカー",age:[24,31],pos:["FW"],base:{attack:80,defense:28,tech:68,speed:66,physical:78,decision:63,mental:64,popularity:65},potential:77,peak:[26,32],traits:["得点源","勝負強い"],wage:[800,1900]}];
+{id:"442_flat",name:"4-4-2 フラット",need:{GK:1,DF:4,MF:4,FW:2},lines:[["FW","FW"],["SMF","CMF","CMF","SMF"],["SB","CB","CB","SB"],["GK"]],desc:"横並びの4-4-2。バランス型で序盤向き。"},
+{id:"442_diamond",name:"4-4-2 ダイヤモンド",need:{GK:1,DF:4,MF:4,FW:2},lines:[["FW","FW"],["OMF"],["CMF","CMF"],["DMF"],["SB","CB","CB","SB"],["GK"]],desc:"中央重視の4-4-2。OMFとDMFの適性が重要。"},
+{id:"442_wide",name:"4-4-2 ワイド",need:{GK:1,DF:4,MF:4,FW:2},lines:[["FW","FW"],["WG","CMF","CMF","WG"],["SB","CB","CB","SB"],["GK"]],desc:"サイド攻撃重視の4-4-2。WG/SMFの突破力が重要。"},
 
-let S=null;
-function $(id){return document.getElementById(id)}
-function R(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function P(a){return a[Math.floor(Math.random()*a.length)]}
-function CL(v,a,b){return Math.max(a,Math.min(b,v))}
-function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
-function YM(v){return Math.round(v).toLocaleString()+"万円"}
+{id:"4231_standard",name:"4-2-3-1 標準",need:{GK:1,DF:4,MF:5,FW:1},lines:[["FW"],["SMF","OMF","SMF"],["DMF","DMF"],["SB","CB","CB","SB"],["GK"]],desc:"守備安定＋トップ下活用。判断力の高いOMFがいると強い。"},
+{id:"4231_wide",name:"4-2-3-1 ワイド",need:{GK:1,DF:4,MF:5,FW:1},lines:[["FW"],["WG","OMF","WG"],["DMF","CMF"],["SB","CB","CB","SB"],["GK"]],desc:"両翼の突破力を重視する4-2-3-1。WGとSBの質が重要。"},
+{id:"4231_defensive",name:"4-2-3-1 守備型",need:{GK:1,DF:4,MF:5,FW:1},lines:[["FW"],["SMF","CMF","SMF"],["DMF","DMF"],["SB","CB","CB","SB"],["GK"]],desc:"トップ下をやや低く置く守備型。堅守速攻と相性が良い。"},
+
+{id:"433_attack",name:"4-3-3 攻撃型",need:{GK:1,DF:4,MF:3,FW:3},lines:[["WG","FW","WG"],["CMF","OMF","CMF"],["SB","CB","CB","SB"],["GK"]],desc:"前線3枚と攻撃的MFで押し込む。攻撃力は高いが守備は不安定。"},
+{id:"433_anchor",name:"4-3-3 アンカー",need:{GK:1,DF:4,MF:3,FW:3},lines:[["WG","FW","WG"],["CMF","DMF","CMF"],["SB","CB","CB","SB"],["GK"]],desc:"中盤底のDMFを置く4-3-3。ポゼッションと守備安定の両立型。"},
+{id:"433_false9",name:"4-3-3 偽9番",need:{GK:1,DF:4,MF:3,FW:3},lines:[["WG","OMF","WG"],["CMF","DMF","CMF"],["SB","CB","CB","SB"],["GK"]],desc:"中央FWに技術型を置く特殊型。技術と連携が高いチーム向き。"},
+
+{id:"352_standard",name:"3-5-2 標準",need:{GK:1,DF:3,MF:5,FW:2},lines:[["FW","FW"],["WB","CMF","OMF","CMF","WB"],["CB","CB","CB"],["GK"]],desc:"中盤支配型。WBの運動量とCBの判断が大切。"},
+{id:"352_defensive",name:"3-5-2 守備型",need:{GK:1,DF:3,MF:5,FW:2},lines:[["FW","FW"],["WB","CMF","DMF","CMF","WB"],["CB","CB","CB"],["GK"]],desc:"中央にDMFを置く守備寄りの3-5-2。格上相手に粘りやすい。"},
+{id:"3412",name:"3-4-1-2",need:{GK:1,DF:3,MF:5,FW:2},lines:[["FW","FW"],["OMF"],["WB","CMF","CMF","WB"],["CB","CB","CB"],["GK"]],desc:"トップ下を置く3バック。OMFの創造性を活かしやすい。"},
+
+{id:"541_standard",name:"5-4-1 標準",need:{GK:1,DF:5,MF:4,FW:1},lines:[["FW"],["SMF","CMF","CMF","SMF"],["WB","CB","CB","CB","WB"],["GK"]],desc:"守備重視。格上相手や残留争い向き。"},
+{id:"541_counter",name:"5-4-1 カウンター",need:{GK:1,DF:5,MF:4,FW:1},lines:[["FW"],["WG","DMF","CMF","WG"],["WB","CB","CB","CB","WB"],["GK"]],desc:"サイドの速さを活かして守って走る。堅守速攻向き。"},
+{id:"532",name:"5-3-2",need:{GK:1,DF:5,MF:3,FW:2},lines:[["FW","FW"],["CMF","DMF","CMF"],["WB","CB","CB","CB","WB"],["GK"]],desc:"5バックに2トップを置く。守備を固めながら前線に枚数を残す。"}
+];
+const tactics=[{id:"balance",name:"バランス",desc:"安定型。相性差は少ないが、爆発力も少ない。",atk:0,def:0},{id:"counter",name:"堅守速攻",desc:"守って速く攻める。格上相手に強い。",atk:-2,def:5},{id:"possession",name:"ポゼッション",desc:"ボール保持で主導権を握る。技術と判断が重要。",atk:4,def:-1},{id:"press",name:"ハイプレス",desc:"前から奪う。走力とフィジカルが重要。",atk:3,def:1},{id:"wide",name:"サイド攻撃",desc:"サイド突破とクロス重視。俊足ウイング向き。",atk:4,def:-2},{id:"longball",name:"ロングボール",desc:"大型FWとフィジカルを活かす。ハイプレス対策に強い。",atk:2,def:0}];
+const roots=[{id:"japan",name:"日本",style:"jp",w:70,bias:{decision:2,teamwork:3,tech:1}},{id:"east_asia",name:"東アジア",style:"foreign",w:3,bias:{speed:2,decision:2,tech:1}},{id:"southeast_asia",name:"東南アジア",style:"foreign",w:2,bias:{speed:3,tech:1,mental:1}},{id:"europe",name:"欧州",style:"foreign",w:5,bias:{tech:2,decision:2,physical:1}},{id:"south_america",name:"南米",style:"foreign",w:4,bias:{attack:3,tech:3,popularity:2}},{id:"africa",name:"アフリカ",style:"foreign",w:3,bias:{speed:4,physical:4,attack:1}},{id:"mixed_japan",name:"日本ルーツMIX",style:"half",w:5,bias:{speed:2,physical:1,tech:1,popularity:1}}];
+const fn=["大吾","勇真","蓮司","悠斗","颯真","拓海","慎吾","琉生","晃平","陽斗","晴翔","直樹","玲央","智久","保仁","一雅","和司","悠馬","修平","剛"],ln=["森谷","松原","藤堂","杉森","片桐","神谷","久世","黒川","成瀬","三浦","田嶋","早坂","宮原","遠宮","三園","黒崎","大槻","佐伯","長瀬","風間"],ff=["ジョアン","ルーカス","ディエゴ","マルコ","アレックス","ニコラ","ミラン","パブロ","イヴァン","ドラガン"],fl=["マテウス","バレット","サントス","ヴィエラ","ロペス","イリッチ","ラドミル","セラーノ","ペトロフ","ヴコヴィッチ"];
+const playerTypes=[
+{key:"veteran_legend",label:"元代表ベテラン",age:[36,42],pos:["MF","FW"],detail:["OMF","CMF","FW"],base:{attack:68,defense:48,tech:78,speed:38,physical:56,decision:84,mental:88,popularity:88},potential:65,peak:[28,36],traits:["人気者","指導力","勝負強い"],wage:[700,1600],cat:"free"},
+{key:"veteran_playmaker",label:"左足司令塔",age:[34,39],pos:["MF"],detail:["CMF","OMF","DMF"],base:{attack:62,defense:52,tech:84,speed:35,physical:48,decision:88,mental:82,popularity:74},potential:70,peak:[27,35],traits:["戦術眼","技術特化","指導力"],wage:[500,1100],cat:"free"},
+{key:"physical_fw",label:"フィジカル決定力FW",age:[23,28],pos:["FW"],detail:["FW"],base:{attack:76,defense:34,tech:58,speed:62,physical:82,decision:66,mental:69,popularity:58},potential:76,peak:[25,31],traits:["フィジカル","決定力","ポストプレー"],wage:[350,900],cat:"club"},
+{key:"college_mf",label:"大卒即戦力MF",age:[22,24],pos:["MF"],detail:["CMF","DMF","OMF"],base:{attack:61,defense:62,tech:67,speed:63,physical:62,decision:68,mental:70,popularity:45},potential:74,peak:[26,31],traits:["即戦力","安定"],wage:[240,520],cat:"student"},
+{key:"youth_tech",label:"ユース天才肌",age:[17,19],pos:["MF","FW"],detail:["OMF","WG","CMF"],base:{attack:56,defense:38,tech:72,speed:64,physical:45,decision:48,mental:50,popularity:50},potential:88,peak:[24,31],traits:["素質","独創的"],wage:[120,300],cat:"youth"},
+{key:"loan_cb",label:"上位クラブ若手レンタル",age:[19,22],pos:["DF"],detail:["CB","SB"],base:{attack:35,defense:70,tech:58,speed:65,physical:70,decision:58,mental:58,popularity:38},potential:82,peak:[25,31],traits:["レンタル","伸びしろ"],wage:[0,250],cat:"club"},
+{key:"speed_winger",label:"俊足サイド",age:[20,27],pos:["FW","MF"],detail:["WG","SMF","WB"],base:{attack:68,defense:43,tech:62,speed:84,physical:58,decision:56,mental:58,popularity:55},potential:75,peak:[23,29],traits:["俊足","波がある"],wage:[260,650],cat:"club"},
+{key:"defender",label:"守備職人CB",age:[24,32],pos:["DF"],detail:["CB"],base:{attack:32,defense:78,tech:52,speed:54,physical:78,decision:72,mental:74,popularity:42},potential:73,peak:[27,34],traits:["守備職人","堅実"],wage:[300,760],cat:"club"},
+{key:"keeper",label:"足元のうまいGK",age:[22,31],pos:["GK"],detail:["GK"],base:{attack:20,defense:75,tech:65,speed:44,physical:67,decision:70,mental:72,popularity:40},potential:74,peak:[28,36],traits:["GK","ビルドアップ"],wage:[280,700],cat:"club"},
+{key:"striker",label:"決定力ストライカー",age:[24,31],pos:["FW"],detail:["FW"],base:{attack:80,defense:28,tech:68,speed:66,physical:78,decision:63,mental:64,popularity:65},potential:77,peak:[26,32],traits:["得点源","勝負強い"],wage:[800,1900],cat:"club"}];
+let S=null,marketFilter="all";
+const $=id=>document.getElementById(id),R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,P=a=>a[Math.floor(Math.random()*a.length)],CL=(v,a,b)=>Math.max(a,Math.min(b,v)),uid=()=>Math.random().toString(36).slice(2)+Date.now().toString(36),YM=v=>Math.round(v).toLocaleString()+"万円";
+function cityObj(name){return cities.find(c=>c.name===name)||{name,tags:["地方"],passion:60,patience:60}}
 function clubName(city){let list=[...teamNames.common];city.tags.forEach(t=>{if(teamNames[t])list=list.concat(teamNames[t])});return city.name+P(list)}
-function pickCity(){return P(cities)}
-function selectedCityObj(){let name=$("citySelect").value;return cities.find(c=>c.name===name)||cities[0]}
-function setSuggestedClub(){let c=pickCity();$("citySelect").value=c.name;$("cityInput").value=c.name;$("clubInput").value=clubName(c)}
-function rootPick(k){let pool=[];roots.forEach(r=>{let w=r.w;if(k==="striker"&&r.id==="japan")w=10;if(k==="striker"&&["south_america","africa","europe"].includes(r.id))w+=8;if(k==="loan_cb"&&r.id==="japan")w+=10;for(let i=0;i<w;i++)pool.push(r)});return P(pool)}
-function nameByRoot(r){if(r.style==="jp")return P(ln)+" "+P(fn);if(r.style==="half")return P(ln)+" "+P(ff);return P(ff)+"・"+P(fl)}
-function applyBias(stats,r){Object.keys(r.bias).forEach(k=>{stats[k]=CL((stats[k]||50)+r.bias[k]+R(-1,1),20,95)})}
+function setSuggested(){let c=P(cities);$("citySelect").value=c.name;$("cityInput").value=c.name;$("clubInput").value=clubName(c)}
+function rootPick(key,cat){let pool=[];roots.forEach(r=>{let w=r.w;if(cat==="student"||cat==="youth"){if(r.id==="japan")w+=35;if(r.id!=="japan"&&r.id!=="mixed_japan")w=Math.max(1,Math.floor(w/2))}if(key==="striker"&&["south_america","africa","europe"].includes(r.id))w+=5;for(let i=0;i<w;i++)pool.push(r)});return P(pool)}
+function nameRoot(r){if(r.style==="jp")return P(ln)+" "+P(fn);if(r.style==="half")return P(ln)+" "+P(ff);return P(ff)+"・"+P(fl)}
+function applyBias(st,r){Object.keys(r.bias).forEach(k=>st[k]=CL((st[k]||50)+r.bias[k]+R(-1,1),20,95))}
 function overall(p){let s=p.stats,w;if(p.pos==="FW")w={attack:.28,tech:.16,speed:.15,physical:.16,decision:.15,mental:.10};else if(p.pos==="MF")w={attack:.16,defense:.14,tech:.23,speed:.10,physical:.10,decision:.19,mental:.08};else if(p.pos==="DF")w={defense:.30,speed:.10,physical:.20,decision:.20,tech:.08,mental:.12};else w={defense:.33,tech:.14,physical:.17,decision:.22,mental:.14};let v=0;Object.keys(w).forEach(k=>v+=(s[k]||50)*w[k]);if(p.age<p.peakStart)v-=Math.min(8,(p.peakStart-p.age)*1.3);else if(p.age>p.peakEnd)v-=Math.min(18,(p.age-p.peakEnd)*1.7);return Math.round(CL(v,30,95))}
-function makePlayer(key,clubId){let t=playerTypes.find(x=>x.key===key)||P(playerTypes),root=rootPick(t.key),age=R(t.age[0],t.age[1]),pos=P(t.pos),stats={};["attack","defense","tech","speed","physical","decision","mental","popularity"].forEach(k=>stats[k]=CL((t.base[k]||50)+R(-6,6),20,95));applyBias(stats,root);let effort=R(35,95),self=R(35,95),inj=R(35,95),ps=R(t.peak[0]-1,t.peak[0]+1),pe=R(t.peak[1]-1,t.peak[1]+1);if(effort>75)pe++;if(self>75)pe++;if(inj<40)pe--;if(stats.tech>78||stats.decision>78)pe++;if(stats.speed>82&&stats.tech<65)pe--;pe=Math.max(ps+1,pe);let p={id:uid(),name:nameByRoot(root),root:root.name,rootId:root.id,pos,age,type:t.label,traits:[...t.traits],stats,potential:CL(t.potential+R(-6,8),45,95),peakStart:ps,peakEnd:pe,effort,selfCare:self,injuryResist:inj,loyalty:R(20,90),teamwork:R(25,90),ambition:R(20,90),contract:R(1,3),clubId,role:"out",apps:0,goals:0,assists:0,ratingSum:0,lastRating:0};p.overall=overall(p);p.wage=Math.round((R(t.wage[0],t.wage[1])+Math.max(0,p.overall-62)*R(8,22)+Math.max(0,stats.popularity-60)*R(6,16))/10)*10;return p}
-function makeClub(cityName,typeKey,isUser,customName){let city=cities.find(c=>c.name===cityName)||{name:cityName,tags:["地方"]};let key=(typeKey&&typeKey!=="random")?typeKey:P(Object.keys(clubTypes)),t=clubTypes[key];return{id:uid(),name:customName||clubName(city),city:city.name,typeKey:key,typeLabel:t.label,note:t.note,isUser,money:9000+t.money*120+R(-500,1200),supporters:2600+t.support*120+R(-400,800),youth:35+t.youth+R(-4,5),scout:35+t.scout+R(-4,5),training:35+R(-4,6),stadium:5000+R(-800,1600),tactic:"balance",formation:"442",tacticExp:{balance:15,counter:5,possession:5,press:5,wide:5,longball:5},players:[],points:0,win:0,draw:0,lose:0,gf:0,ga:0}}
-function addSquad(c){let mix=["keeper","defender","defender","defender","defender","college_mf","college_mf","speed_winger","physical_fw","veteran_playmaker","loan_cb","youth_tech"];for(let i=0;i<26;i++)c.players.push(makePlayer(mix[i%mix.length],c.id));if(c.isUser){c.players.push(makePlayer("veteran_legend",c.id));c.players.push(makePlayer("striker",c.id))}autoLineup(c)}
+function makePlayer(key,clubId,catOverride){let t=playerTypes.find(x=>x.key===key)||P(playerTypes),cat=catOverride||t.cat,root=rootPick(t.key,cat),age=R(t.age[0],t.age[1]),pos=P(t.pos),stats={};["attack","defense","tech","speed","physical","decision","mental","popularity"].forEach(k=>stats[k]=CL((t.base[k]||50)+R(-6,6),20,95));applyBias(stats,root);let effort=R(35,95),self=R(35,95),inj=R(35,95),ps=R(t.peak[0]-1,t.peak[0]+1),pe=R(t.peak[1]-1,t.peak[1]+1);if(effort>75)pe++;if(self>75)pe++;if(inj<40)pe--;if(stats.tech>78||stats.decision>78)pe++;if(stats.speed>82&&stats.tech<65)pe--;pe=Math.max(ps+1,pe);let detail=[...t.detail],p={id:uid(),name:nameRoot(root),root:root.name,rootId:root.id,pos,detailMain:P(detail),detailSubs:detail.filter(x=>Math.random()<.45),age,type:t.label,category:cat,traits:[...t.traits],stats,potential:CL(t.potential+R(-6,8),45,95),peakStart:ps,peakEnd:pe,effort,selfCare:self,injuryResist:inj,loyalty:R(20,90),teamwork:R(25,90),ambition:R(20,90),contract:R(1,3),clubId,role:"out",apps:0,goals:0,assists:0,ratingSum:0,lastRating:0,stamina:100,growthLog:[]};p.overall=overall(p);p.wage=Math.round((R(t.wage[0],t.wage[1])+Math.max(0,p.overall-62)*R(8,22)+Math.max(0,stats.popularity-60)*R(6,16))/10)*10;return p}
+function makeClub(cityName,typeKey,isUser,customName){let co=cityObj(cityName),key=(typeKey&&typeKey!=="random")?typeKey:P(Object.keys(clubTypes)),t=clubTypes[key];return{id:uid(),name:customName||clubName(co),city:co.name,passion:co.passion,patience:co.patience,typeKey:key,typeLabel:t.label,note:t.note,goal:t.goal,expect:t.expect,isUser,money:9000+t.money*120+R(-500,1200),supporters:2600+t.support*120+R(-400,800),youth:35+t.youth+R(-4,5),scout:35+t.scout+R(-4,5),training:35+R(-4,6),stadium:5000+R(-800,1600),tactic:"balance",formation:"442_flat",subPolicy:"normal",tacticExp:{balance:15,counter:5,possession:5,press:5,wide:5,longball:5},players:[],points:0,win:0,draw:0,lose:0,gf:0,ga:0}}
+function addSquad(c){let mix=["keeper","defender","defender","defender","defender","college_mf","college_mf","speed_winger","physical_fw","veteran_playmaker","loan_cb","youth_tech"];for(let i=0;i<26;i++)c.players.push(makePlayer(mix[i%mix.length],c.id));if(c.isUser){c.players.push(makePlayer("veteran_legend",c.id,"free"));c.players.push(makePlayer("striker",c.id,"club"))}autoLineup(c,"balance")}
 function schedule(clubs){let ids=clubs.map(c=>c.id),n=ids.length,rounds=[],arr=[...ids];for(let r=0;r<n-1;r++){let pairs=[];for(let i=0;i<n/2;i++){let a=arr[i],b=arr[n-1-i];pairs.push(i%2===0?[a,b]:[b,a])}rounds.push(pairs);arr=[arr[0],arr[n-1],...arr.slice(1,n-1)]}return rounds.concat(rounds.map(r=>r.map(p=>[p[1],p[0]])))}
-function findClub(id){return S.clubs.find(c=>c.id===id)}
-function uc(){return findClub(S.userClubId)}
-function need(c){return formations.find(f=>f.id===c.formation).need}
-function autoLineup(c){c.players.forEach(p=>p.role="out");let n=need(c),sel=[];["GK","DF","MF","FW"].forEach(pos=>{c.players.filter(p=>p.pos===pos&&!sel.includes(p)).sort((a,b)=>b.overall-a.overall).slice(0,n[pos]||0).forEach(p=>{p.role="starter";sel.push(p)})});if(sel.length<11)c.players.filter(p=>p.role==="out").sort((a,b)=>b.overall-a.overall).slice(0,11-sel.length).forEach(p=>p.role="starter");c.players.filter(p=>p.role==="out").sort((a,b)=>b.overall-a.overall).slice(0,7).forEach(p=>p.role="bench")}
-function validLineup(c){return c.players.filter(p=>p.role==="starter").length===11}
+function fc(id){return S.clubs.find(c=>c.id===id)}function uc(){return fc(S.userClubId)}function form(){return formations.find(f=>f.id===uc().formation)}function need(c){return formations.find(f=>f.id===c.formation).need}
+function scoreForLineup(p,mode){let v=p.overall;if(mode==="youth")v+=Math.max(0,p.potential-p.overall)*.45+(25-p.age)*1.2;if(mode==="balance")v+=Math.max(0,p.potential-p.overall)*.18+(p.stamina-70)*.08;if(mode==="now")v+=(p.stamina-70)*.12;return v}
+function autoLineup(c,mode){mode=mode||"balance";c.players.forEach(p=>p.role="out");let n=need(c),sel=[];["GK","DF","MF","FW"].forEach(pos=>{c.players.filter(p=>p.pos===pos&&!sel.includes(p)).sort((a,b)=>scoreForLineup(b,mode)-scoreForLineup(a,mode)).slice(0,n[pos]||0).forEach(p=>{p.role="starter";sel.push(p)})});if(sel.length<11)c.players.filter(p=>p.role==="out").sort((a,b)=>scoreForLineup(b,mode)-scoreForLineup(a,mode)).slice(0,11-sel.length).forEach(p=>p.role="starter");c.players.filter(p=>p.role==="out").sort((a,b)=>scoreForLineup(b,mode)-scoreForLineup(a,mode)).slice(0,7).forEach(p=>p.role="bench")}
+function valid(c){return c.players.filter(p=>p.role==="starter").length===11}
 function balance(c){let counts={GK:0,DF:0,MF:0,FW:0},n=need(c),warn=[],pen=0;c.players.filter(p=>p.role==="starter").forEach(p=>counts[p.pos]++);["GK","DF","MF","FW"].forEach(pos=>{let d=Math.abs((counts[pos]||0)-(n[pos]||0));if(d){pen+=d*1.8;warn.push(pos+counts[pos]+"/"+(n[pos]||0))}});return{counts,warn,pen}}
-function power(c){if(!validLineup(c))autoLineup(c);let st=c.players.filter(p=>p.role==="starter"),avg=st.reduce((s,p)=>s+p.overall,0)/Math.max(1,st.length),men=st.reduce((s,p)=>s+p.stats.mental,0)/Math.max(1,st.length),tw=st.reduce((s,p)=>s+p.teamwork,0)/Math.max(1,st.length),ta=tactics.find(t=>t.id===c.tactic),b=balance(c);return avg+men*.06+tw*.05+(c.tacticExp[c.tactic]||0)*.08+(ta.atk+ta.def)*.2-b.pen}
-function ratePlayers(c,result){let st=c.players.filter(p=>p.role==="starter"),base=result==="win"?6.7:result==="draw"?6.2:5.8;st.forEach(p=>{let r=CL(base+(p.overall-65)*.035+R(-8,10)/10,4.5,8.8);p.lastRating=r;p.apps++;p.ratingSum+=r})}
+function power(c){if(!valid(c))autoLineup(c,"balance");let st=c.players.filter(p=>p.role==="starter"),avg=st.reduce((s,p)=>s+p.overall*(0.72+p.stamina/350),0)/Math.max(1,st.length),men=st.reduce((s,p)=>s+p.stats.mental,0)/Math.max(1,st.length),tw=st.reduce((s,p)=>s+p.teamwork,0)/Math.max(1,st.length),ta=tactics.find(t=>t.id===c.tactic),b=balance(c);return avg+men*.06+tw*.05+(c.tacticExp[c.tactic]||0)*.08+(ta.atk+ta.def)*.2-b.pen}
+function doSubs(c){let changes=[];if(c.subPolicy==="none")return changes;let limit=c.subPolicy==="active"?5:3,starters=c.players.filter(p=>p.role==="starter").sort((a,b)=>a.stamina-b.stamina),bench=c.players.filter(p=>p.role==="bench").sort((a,b)=>b.overall-a.overall);for(let s of starters){if(changes.length>=limit)break;if(s.stamina>(c.subPolicy==="active"?62:48))continue;let repl=bench.find(b=>b.pos===s.pos)||bench[0];if(!repl)continue;s.role="bench";repl.role="starter";changes.push(s.name+"→"+repl.name);bench=bench.filter(b=>b.id!==repl.id)}return changes}
+function ratePlayers(c,result){let st=c.players.filter(p=>p.role==="starter"),base=result==="win"?6.7:result==="draw"?6.2:5.8;st.forEach(p=>{let r=CL(base+(p.overall-65)*.035+R(-8,10)/10,4.5,8.8);p.lastRating=r;p.apps++;p.ratingSum+=r;p.stamina=CL(p.stamina-R(12,24),20,100)});c.players.filter(p=>p.role!=="starter").forEach(p=>p.stamina=CL(p.stamina+R(4,10),20,100))}
 function scoreEvents(c,goals){let st=c.players.filter(p=>p.role==="starter"),fw=st.filter(p=>p.pos==="FW"),mf=st.filter(p=>p.pos==="MF"),ev=[];for(let i=0;i<goals;i++){let scorer=P((Math.random()<.6&&fw.length)?fw:st),assist=P((Math.random()<.7&&mf.length)?mf:st);scorer.goals++;assist.assists++;ev.push({club:c.id,scorer:scorer.name,assist:assist.name})}return ev}
 function comment(c){let st=c.players.filter(p=>p.role==="starter").sort((a,b)=>(b.lastRating||0)-(a.lastRating||0)),p=st[0]||c.players[0],t=tactics.find(x=>x.id===c.tactic).name;return P([p.name+"がチームを支えました。",p.name+"の働きで、"+t+"の狙いが見えました。",p.name+"が存在感を示し、試合の流れを作りました。",p.type+"の"+p.name+"が次節に向けた好材料になりました。"])}
-function sim(h,a){let hp=power(h)+R(-9,9)+2,ap=power(a)+R(-9,9),hg=Math.max(0,Math.round((hp-50)/14+R(0,2)-R(0,1))),ag=Math.max(0,Math.round((ap-51)/14+R(0,2)-R(0,1)));if(Math.random()<.1)hg++;if(Math.random()<.1)ag++;h.gf+=hg;h.ga+=ag;a.gf+=ag;a.ga+=hg;let hr=hg>ag?"win":hg===ag?"draw":"lose",ar=ag>hg?"win":ag===hg?"draw":"lose";if(hg>ag){h.win++;a.lose++;h.points+=3}else if(hg<ag){a.win++;h.lose++;a.points+=3}else{h.draw++;a.draw++;h.points++;a.points++}h.tacticExp[h.tactic]=CL((h.tacticExp[h.tactic]||0)+1,0,100);a.tacticExp[a.tactic]=CL((a.tacticExp[a.tactic]||0)+1,0,100);ratePlayers(h,hr);ratePlayers(a,ar);return{hg,ag,events:scoreEvents(h,hg).concat(scoreEvents(a,ag))}}
+function sim(h,a){let hSubs=doSubs(h),aSubs=doSubs(a),hp=power(h)+R(-9,9)+2,ap=power(a)+R(-9,9),hg=Math.max(0,Math.round((hp-50)/14+R(0,2)-R(0,1))),ag=Math.max(0,Math.round((ap-51)/14+R(0,2)-R(0,1)));if(Math.random()<.1)hg++;if(Math.random()<.1)ag++;h.gf+=hg;h.ga+=ag;a.gf+=ag;a.ga+=hg;let hr=hg>ag?"win":hg===ag?"draw":"lose",ar=ag>hg?"win":ag===hg?"draw":"lose";if(hg>ag){h.win++;a.lose++;h.points+=3}else if(hg<ag){a.win++;h.lose++;a.points+=3}else{h.draw++;a.draw++;h.points++;a.points++}h.tacticExp[h.tactic]=CL((h.tacticExp[h.tactic]||0)+1,0,100);a.tacticExp[a.tactic]=CL((a.tacticExp[a.tactic]||0)+1,0,100);ratePlayers(h,hr);ratePlayers(a,ar);return{hg,ag,hSubs,aSubs,events:scoreEvents(h,hg).concat(scoreEvents(a,ag))}}
 function rank(){return[...S.clubs].sort((a,b)=>b.points-a.points||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)}
 function log(t){S.logs.unshift({date:S.year+"年"+S.month+"月",text:t});S.logs=S.logs.slice(0,100)}
-function nextText(){if(!S)return"";if(S.round>S.schedule.length)return"シーズン終了。翌シーズンへ進めます。";let pair=S.schedule[S.round-1].find(p=>p.includes(S.userClubId)),op=findClub(pair[0]===S.userClubId?pair[1]:pair[0]);return "第"+S.round+"節："+op.name+"戦が控えています。"}
-function playRound(){if(!S)return;if(S.round>S.schedule.length){nextSeason();return}let u=uc(),beforeRank=rank().findIndex(x=>x.id===u.id)+1;S.prev={rank:beforeRank,money:u.money,supporters:u.supporters};let userMood="draw";S.schedule[S.round-1].forEach(pair=>{let h=findClub(pair[0]),a=findClub(pair[1]),r=sim(h,a);if(h.id===u.id||a.id===u.id){let us=h.id===u.id?h:a,op=h.id===u.id?a:h,ug=h.id===u.id?r.hg:r.ag,og=h.id===u.id?r.ag:r.hg,m=ug>og?"勝利":ug<og?"敗戦":"引き分け";userMood=m;let ev=r.events.filter(e=>e.club===us.id),evText=ev.length?ev.map((e,i)=>(i+1)+"点目："+e.scorer+"（アシスト："+e.assist+"）").join("\n"):"得点者：なし",ratings=us.players.filter(p=>p.role==="starter").sort((x,y)=>(y.lastRating||0)-(x.lastRating||0)),best=ratings[0],rateText=ratings.map(p=>p.name+"　"+(p.lastRating||6).toFixed(1)).join("\n"),b=balance(us);S.latest="第"+S.round+"節　"+us.name+" "+ug+"-"+og+" "+op.name+"\n\n【得点】\n"+evText+"\n\n【総評】\n"+m+"。"+comment(us)+(best?("\n最高評価："+best.name+" "+best.lastRating.toFixed(1)):"")+"\n戦術「"+tactics.find(t=>t.id===us.tactic).name+"」の成熟度が少し上がりました。"+(b.warn.length?("\n編成メモ：ポジションバランス "+b.warn.join("、")+"。"):"")+"\n\n【各選手評価】\n"+rateText;log("第"+S.round+"節："+op.name+"戦は"+ug+"-"+og+"で"+m+"。")}});S.round++;if((S.round-1)%4===0)S.month++;if(S.month>12){S.month=1;S.year++}let c=uc(),att=Math.min(c.stadium,Math.round(c.supporters*(.55+Math.random()*.25))),income=Math.round(att*.018);c.money+=income;let fan=userMood==="勝利"?R(25,90):userMood==="引き分け"?R(-15,30):R(-95,-20),nowRank=rank().findIndex(x=>x.id===c.id)+1;if(nowRank>beforeRank)fan-=R(10,40);if(nowRank<beforeRank)fan+=R(10,45);c.supporters=Math.max(0,c.supporters+fan);if(fan<0)log("成績や順位の影響でサポーターが"+Math.abs(fan)+"人減少しました。");else if(fan>0)log("試合結果を受けてサポーターが"+fan+"人増加しました。");if(S.round>S.schedule.length)finishSeason();render()}
+function windows(){return{club:[6,7,8,1],free:[6,7,8,9,1,2],student:[11,12,1,2,3],youth:[6,7,8,1,2,3]}}
+function canSign(cat){return windows()[cat]?.includes(S.month)}
+function windowMsg(){let msgs=[];Object.entries(windows()).forEach(([cat,months])=>{if(months.includes(S.month)){let sorted=[...months].sort((a,b)=>a-b),idx=sorted.indexOf(S.month),remain=sorted.length-idx-1;if(remain===0)msgs.push(labelCat(cat)+"は今月が期限です。");else if(remain===1)msgs.push(labelCat(cat)+"は期限1か月前です。")}});return msgs}
+function labelCat(c){return{all:"一覧",free:"自由契約",student:"学生",youth:"ユース昇格",club:"他チーム"}[c]||c}
+function marketPool(){let keys=["veteran_legend","veteran_playmaker","physical_fw","college_mf","youth_tech","loan_cb","speed_winger","defender","keeper","striker"],arr=[];for(let i=0;i<4;i++)arr.push(makePlayer(P(["veteran_legend","veteran_playmaker","defender","keeper"]),"market","free"));for(let i=0;i<4;i++)arr.push(makePlayer(P(["college_mf","speed_winger","physical_fw"]),"market","student"));for(let i=0;i<3;i++)arr.push(makePlayer("youth_tech","market","youth"));for(let i=0;i<7;i++)arr.push(makePlayer(P(["physical_fw","loan_cb","speed_winger","defender","keeper","striker"]),"market","club"));return arr}
+function supportDelta(mood,beforeRank,afterRank){let c=uc(),type=clubTypes[c.typeKey],rankGap=afterRank-type.expect,base=mood==="勝利"?R(25,90):mood==="引き分け"?R(-15,30):R(-95,-20);if(rankGap<=0)base+=R(15,55);if(rankGap>=4)base-=R(30,90);if(afterRank>beforeRank)base-=R(10,40);if(afterRank<beforeRank)base+=R(10,45);base=Math.round(base*(c.passion/70));if(base<0)base=Math.round(base*(100-c.patience)/50);return base}
+function nextText(){if(!S)return"";if(S.round>S.schedule.length)return"シーズン終了。翌シーズンへ進めます。";let pair=S.schedule[S.round-1].find(p=>p.includes(S.userClubId)),op=fc(pair[0]===S.userClubId?pair[1]:pair[0]);return"第"+S.round+"節："+op.name+"戦が控えています。"}
+function fc(id){return S.clubs.find(c=>c.id===id)}function uc(){return fc(S.userClubId)}
+function playRound(){if(!S)return;if(S.round>S.schedule.length){nextSeason();return}runDailyTraining(7,false);let u=uc(),beforeRank=rank().findIndex(x=>x.id===u.id)+1;S.prev={rank:beforeRank,money:u.money,supporters:u.supporters};let userMood="引き分け";S.schedule[S.round-1].forEach(pair=>{let h=fc(pair[0]),a=fc(pair[1]),r=sim(h,a);if(h.id===u.id||a.id===u.id){let us=h.id===u.id?h:a,op=h.id===u.id?a:h,ug=h.id===u.id?r.hg:r.ag,og=h.id===u.id?r.ag:r.hg,m=ug>og?"勝利":ug<og?"敗戦":"引き分け";userMood=m;let ev=r.events.filter(e=>e.club===us.id),evText=ev.length?ev.map((e,i)=>(i+1)+"点目："+e.scorer+"（アシスト："+e.assist+"）").join("\n"):"得点者：なし",ratings=us.players.filter(p=>p.role==="starter").sort((x,y)=>posRank(x)-posRank(y)||y.lastRating-x.lastRating),best=[...ratings].sort((x,y)=>y.lastRating-x.lastRating)[0],rateText=ratings.map(p=>p.pos+" "+p.name+"　"+(p.lastRating||6).toFixed(1)+"　残体力"+p.stamina).join("\n"),subText=(h.id===us.id?r.hSubs:r.aSubs).length?(h.id===us.id?r.hSubs:r.aSubs).join("、"):"交代なし";S.latest="第"+S.round+"節　"+us.name+" "+ug+"-"+og+" "+op.name+"\n\n【得点】\n"+evText+"\n\n【総評】\n"+m+"。"+comment(us)+"\n最高評価："+(best?best.name+" "+best.lastRating.toFixed(1):"-")+"\n交代："+subText+"\n戦術「"+tactics.find(t=>t.id===us.tactic).name+"」の成熟度が少し上がりました。\n\n【各選手評価】\n"+rateText;log("第"+S.round+"節："+op.name+"戦は"+ug+"-"+og+"で"+m+"。")}});S.round++;advanceDays(6)let c=uc(),att=Math.min(c.stadium,Math.round(c.supporters*(.55+Math.random()*.25))),income=Math.round(att*.018);c.money+=income;let afterRank=rank().findIndex(x=>x.id===c.id)+1,fan=supportDelta(userMood,beforeRank,afterRank);c.supporters=Math.max(0,c.supporters+fan);if(fan<0)log("成績や期待値の影響でサポーターが"+Math.abs(fan)+"人減少しました。");else if(fan>0)log("試合結果と期待値を受けてサポーターが"+fan+"人増加しました。");if(S.round>S.schedule.length)finishSeason();render()}
 function finishSeason(){let r=rank().findIndex(c=>c.id===S.userClubId)+1,c=uc(),prize=Math.max(500,(13-r)*340),gain=Math.max(50,(13-r)*95);c.money+=prize;c.supporters+=gain;log("シーズン終了。"+c.name+"は"+r+"位。賞金"+YM(prize)+"、サポーター+"+gain+"人。")}
-function nextSeason(){let c=uc();S.year++;S.month=8;S.round=1;S.schedule=schedule(S.clubs);S.clubs.forEach(cl=>{cl.points=cl.win=cl.draw=cl.lose=cl.gf=cl.ga=0;cl.players.forEach(p=>{p.age++;p.contract=Math.max(0,p.contract-1);if(p.age>p.peakEnd){p.stats.speed=CL(p.stats.speed-R(0,2),20,95);p.stats.physical=CL(p.stats.physical-R(0,2),20,95);p.stats.decision=CL(p.stats.decision+R(0,1),20,95);p.stats.mental=CL(p.stats.mental+R(0,1),20,95)}else if(p.age<p.peakStart){p.stats.attack=CL(p.stats.attack+R(0,1),20,95);p.stats.defense=CL(p.stats.defense+R(0,1),20,95);p.stats.tech=CL(p.stats.tech+R(0,1),20,95)}p.overall=overall(p)})});S.prev={rank:rank().findIndex(x=>x.id===c.id)+1,money:c.money,supporters:c.supporters};S.latest="新シーズンが始まりました。";log(S.year+"年シーズンが始まりました。契約更新・補強・育成方針を確認してください。");render()}
-function startGame(){try{let city=$("cityInput").value.trim()||$("citySelect").value||selectedCityObj().name,custom=$("clubInput").value.trim(),u=makeClub(city,$("typeSelect").value,true,custom||null),used=new Set([city]),clubs=[u];while(clubs.length<12){let c=P(cities);if(used.has(c.name))continue;used.add(c.name);clubs.push(makeClub(c.name,"random",false,null))}clubs.forEach(addSquad);S={version:"0.0.5",year:2026,month:8,round:1,userClubId:u.id,clubs,schedule:schedule(clubs),logs:[],latest:"まだ試合はありません。",market:Array.from({length:8},()=>makePlayer(P(["veteran_legend","physical_fw","college_mf","loan_cb","speed_winger","defender","striker"]),null)),lastTrainingMonth:null,prev:{rank:1,money:u.money,supporters:u.supporters}};S.prev.rank=rank().findIndex(x=>x.id===u.id)+1;log("新クラブ「"+u.name+"」が発足しました。"+u.note);log("v0.0.5：起動画面を作り直し、クラブ名を自動生成＋編集可能にしました。");$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render()}catch(e){alert("開始処理でエラーが出ました: "+e.message)}}
+function nextSeason(){let c=uc();S.year++;S.month=8;S.day=1;S.round=1;S.schedule=schedule(S.clubs);S.market=marketPool();S.scoutRefreshCount=0;S.clubs.forEach(cl=>{cl.points=cl.win=cl.draw=cl.lose=cl.gf=cl.ga=0;cl.players.forEach(p=>{p.age++;p.contract=Math.max(0,p.contract-1);p.stamina=100;let before=p.overall;if(p.age>p.peakEnd){p.stats.speed=CL(p.stats.speed-R(0,2),20,95);p.stats.physical=CL(p.stats.physical-R(0,2),20,95);p.stats.decision=CL(p.stats.decision+R(0,1),20,95);p.stats.mental=CL(p.stats.mental+R(0,1),20,95)}else if(p.age<p.peakStart){p.stats.attack=CL(p.stats.attack+R(0,1),20,95);p.stats.defense=CL(p.stats.defense+R(0,1),20,95);p.stats.tech=CL(p.stats.tech+R(0,1),20,95)}p.overall=overall(p);let diff=p.overall-before;if(diff)p.growthLog.unshift({date:S.year+"年開幕",text:"年齢変化 "+(diff>0?"+":"")+diff,delta:diff})})});S.prev={rank:rank().findIndex(x=>x.id===c.id)+1,money:c.money,supporters:c.supporters};S.latest="新シーズンが始まりました。";log(S.year+"年シーズンが始まりました。補強候補が更新されました。");render()}
+function dateKey(){return S.year+"-"+S.month+"-"+(S.day||1)}
+function runDailyTraining(days,manual){if(!S)return;days=days||1;let done=0;for(let d=0;d<days;d++){let key=dateKey();if(S.lastTrainingDay===key&&!manual)break;if(S.lastTrainingDay===key&&manual){alert("今日はすでに育成済みです。");return}let mode=$("trainingSelect").value||S.trainingMode||"auto";S.trainingMode=mode;if(mode==="auto")mode=P(["attack","defense","tech","physical","youth"]);let c=uc(),targets=c.players.filter(p=>mode==="youth"?p.age<=23:true).sort((a,b)=>(b.potential-b.overall)-(a.potential-a.overall)).slice(0,6);targets.forEach(p=>{let before=p.overall,rate=0.28;if(p.age<=23)rate+=0.15;if(p.effort>75)rate+=0.10;if(mode==="attack"&&Math.random()<rate)p.stats.attack=CL(p.stats.attack+1,20,95);if(mode==="defense"&&Math.random()<rate)p.stats.defense=CL(p.stats.defense+1,20,95);if(mode==="tech"&&Math.random()<rate)p.stats.tech=CL(p.stats.tech+1,20,95);if(mode==="physical"&&Math.random()<rate){p.stats.speed=CL(p.stats.speed+1,20,95);p.stats.physical=CL(p.stats.physical+1,20,95)}if(mode==="youth"&&Math.random()<rate){p.stats.tech=CL(p.stats.tech+1,20,95);p.stats.decision=CL(p.stats.decision+1,20,95)}p.overall=overall(p);let diff=p.overall-before;if(diff)p.growthLog.unshift({date:S.year+"年"+S.month+"月"+(S.day||1)+"日",text:"日次育成 "+(diff>0?"+":"")+diff,delta:diff})});S.lastTrainingDay=key;done++;if(manual)break;advanceDayOnly()}if(done>0)log((manual?"今日の育成":"未実行分の育成")+"を"+done+"日分実行しました。");if(manual)render()}
+function advanceDayOnly(){S.day=(S.day||1)+1;if(S.day>30){S.day=1;S.month++;if(S.month>12){S.month=1;S.year++}}}
+function advanceDays(n){for(let i=0;i<n;i++)advanceDayOnly()}
+function startGame(){try{let city=$("cityInput").value.trim()||$("citySelect").value,custom=$("clubInput").value.trim(),u=makeClub(city,$("typeSelect").value,true,custom||null),used=new Set([city]),clubs=[u];while(clubs.length<12){let c=P(cities);if(used.has(c.name))continue;used.add(c.name);clubs.push(makeClub(c.name,"random",false,null))}clubs.forEach(addSquad);S={version:"0.0.7",year:2026,month:8,day:1,round:1,userClubId:u.id,clubs,schedule:schedule(clubs),logs:[],latest:"まだ試合はありません。",market:marketPool(),marketFilter:"all",trainingMode:"auto",lastTrainingDay:null,scoutRefreshCount:0,prev:{rank:1,money:u.money,supporters:u.supporters}};S.prev.rank=rank().findIndex(x=>x.id===u.id)+1;log("新クラブ「"+u.name+"」が発足しました。目標："+u.goal+"。");log("v0.0.7：全フォーメーションを複数パターン化し、育成を日次自動実行に変更しました。");$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render()}catch(e){alert("開始処理でエラーが出ました: "+e.message)}}
 function save(){if(!S){alert("保存するゲームがありません。");return}localStorage.setItem("footballClubBuilderSave",JSON.stringify(S));alert("保存しました。")}
 function load(){let raw=localStorage.getItem("footballClubBuilderSave");if(!raw){alert("保存データがありません。");return}S=JSON.parse(raw);$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render();alert("読み込みました。")}
-function train(){if(!S)return;let key=S.year+"-"+S.month;if(S.lastTrainingMonth===key){alert("今月はすでに育成済みです。");return}let mode=$("trainingSelect").value,c=uc(),targets=c.players.filter(p=>p.age<=24||mode!=="youth").sort((a,b)=>a.age-b.age).slice(0,8);targets.forEach(p=>{if(mode==="attack")p.stats.attack=CL(p.stats.attack+1,20,95);if(mode==="defense")p.stats.defense=CL(p.stats.defense+1,20,95);if(mode==="tech")p.stats.tech=CL(p.stats.tech+1,20,95);if(mode==="physical"){p.stats.speed=CL(p.stats.speed+1,20,95);p.stats.physical=CL(p.stats.physical+1,20,95)}if(mode==="youth"&&p.age<=23){p.stats.tech=CL(p.stats.tech+1,20,95);p.stats.decision=CL(p.stats.decision+1,20,95)}p.overall=overall(p)});S.lastTrainingMonth=key;log("今月の育成を実行しました。対象選手の能力が少し伸びました。");render()}
-function canMarket(){return [1,6,7,8].includes(S.month)}
-function sign(id){let p=S.market.find(x=>x.id===id),c=uc();if(!p)return;if(!canMarket()){alert("現在は通常補強期間外です。");return}if(c.money<p.wage){alert("資金が足りません。");return}c.money-=p.wage;p.clubId=c.id;p.role="out";c.players.push(p);S.market=S.market.filter(x=>x.id!==id);log(p.name+"を獲得しました。"+p.type+"としてチームに加わります。");render()}
-function dcls(v,good){return"delta "+(v===0?"flat":((v>0)===good?"up":"down"))}
-function dtext(v,suf){return v===0?"→":(v>0?"↑+"+Math.round(v).toLocaleString()+suf:"↓"+Math.abs(Math.round(v)).toLocaleString()+suf)}
-function render(){let c=uc(),rn=rank().findIndex(x=>x.id===c.id)+1,prev=S.prev||{rank:rn,money:c.money,supporters:c.supporters},rd=prev.rank-rn,md=c.money-prev.money,sd=c.supporters-prev.supporters;$("clubName").textContent=c.name;$("clubSub").textContent=c.typeLabel+" / 日本3部リーグ / "+S.year+"年"+S.month+"月 / 第"+Math.min(S.round,S.schedule.length)+"節";$("rankNow").textContent=rn+"位";$("rankDelta").textContent=rd===0?"→":rd>0?"↑"+rd:"↓"+Math.abs(rd);$("rankDelta").className=dcls(rd,true);$("money").textContent=YM(c.money);$("moneyDelta").textContent=dtext(md,"万");$("moneyDelta").className=dcls(md,true);$("supporters").textContent=Math.max(0,c.supporters).toLocaleString()+"人";$("supporterDelta").textContent=dtext(sd,"人");$("supporterDelta").className=dcls(sd,true);$("nextText").textContent=nextText();$("latestBox").textContent=S.latest;let ended=S.round>S.schedule.length;$("monthBtn").disabled=ended;$("endBtn").disabled=ended;$("playBtn").textContent=ended?"翌シーズンへ":"次の試合へ";$("nextSeasonBtn").style.display=ended?"inline-block":"none";$("statusBox").innerHTML=[["クラブタイプ",c.typeLabel],["練習場",c.training],["ユース",c.youth],["スカウト",c.scout],["スタジアム",c.stadium.toLocaleString()+"人"],["現在戦術",tactics.find(t=>t.id===c.tactic).name],["現在順位",rn+"位 "+(rd===0?"→":rd>0?"↑":"↓")],["サポーター増減",(sd>0?"+":"")+Math.round(sd).toLocaleString()+"人"],["資金増減",(md>0?"+":"")+Math.round(md).toLocaleString()+"万円"]].map(x=>"<div class='stat-row'><span>"+x[0]+"</span><strong>"+x[1]+"</strong></div>").join("");renderLineup();renderSquad();renderTactics();renderLeague();renderMarket();renderLog()}
-function roleRank(r){return r==="starter"?0:r==="bench"?1:2}
-function posRank(p){return {GK:0,DF:1,MF:2,FW:3}[p.pos]??9}
+function sign(id){let p=S.market.find(x=>x.id===id),c=uc();if(!p)return;if(!canSign(p.category)){alert("現在は"+labelCat(p.category)+"の補強期間外です。");return}if(c.money<p.wage){alert("資金が足りません。");return}c.money-=p.wage;p.clubId=c.id;p.role="out";c.players.push(p);S.market=S.market.filter(x=>x.id!==id);log(p.name+"を獲得しました。"+labelCat(p.category)+"枠の"+p.type+"です。");render()}
+function refreshScout(){if(!S)return;let cost=300+S.scoutRefreshCount*150;if(uc().money<cost){alert("資金が足りません。必要資金："+YM(cost));return}uc().money-=cost;S.scoutRefreshCount++;S.market=marketPool();log("スカウトリストを更新しました。費用："+YM(cost));render()}
+function canSign(cat){return windows()[cat]?.includes(S.month)}function windows(){return{club:[6,7,8,1],free:[6,7,8,9,1,2],student:[11,12,1,2,3],youth:[6,7,8,1,2,3]}}function labelCat(c){return{all:"一覧",free:"自由契約",student:"学生",youth:"ユース昇格",club:"他チーム"}[c]||c}
+function windowMsg(){let msgs=[];Object.entries(windows()).forEach(([cat,months])=>{if(months.includes(S.month)){let sorted=[...months].sort((a,b)=>a-b),idx=sorted.indexOf(S.month),remain=sorted.length-idx-1;if(remain===0)msgs.push(labelCat(cat)+"は今月が期限です。");else if(remain===1)msgs.push(labelCat(cat)+"は期限1か月前です。")}});return msgs}
+function dcls(v,good){return"delta "+(v===0?"flat":((v>0)===good?"up":"down"))}function dtext(v,suf){return v===0?"→":(v>0?"↑+"+Math.round(v).toLocaleString()+suf:"↓"+Math.abs(Math.round(v)).toLocaleString()+suf)}
+function render(){let c=uc(),rn=rank().findIndex(x=>x.id===c.id)+1,prev=S.prev||{rank:rn,money:c.money,supporters:c.supporters},rd=prev.rank-rn,md=c.money-prev.money,sd=c.supporters-prev.supporters;$("clubName").textContent=c.name;$("clubSub").textContent=c.typeLabel+" / 日本3部リーグ / "+S.year+"年"+S.month+"月"+(S.day||1)+"日 / 第"+Math.min(S.round,S.schedule.length)+"節";$("rankNow").textContent=rn+"位";$("rankDelta").textContent=rd===0?"→":rd>0?"↑"+rd:"↓"+Math.abs(rd);$("rankDelta").className=dcls(rd,true);$("money").textContent=YM(c.money);$("moneyDelta").textContent=dtext(md,"万");$("moneyDelta").className=dcls(md,true);$("supporters").textContent=Math.max(0,c.supporters).toLocaleString()+"人";$("supporterDelta").textContent=dtext(sd,"人");$("supporterDelta").className=dcls(sd,true);$("nextText").textContent=nextText();$("latestBox").textContent=S.latest;let ended=S.round>S.schedule.length;$("monthBtn").disabled=ended;$("endBtn").disabled=ended;$("playBtn").textContent=ended?"翌シーズンへ":"次の試合へ";$("nextSeasonBtn").style.display=ended?"inline-block":"none";$("subPolicySelect").value=c.subPolicy;$("trainingSelect").value=S.trainingMode||"auto";$("statusBox").innerHTML=[["クラブタイプ",c.typeLabel],["目標",c.goal],["情熱/我慢",c.passion+"/"+c.patience],["練習場",c.training],["ユース",c.youth],["スカウト",c.scout],["スタジアム",c.stadium.toLocaleString()+"人"],["現在戦術",tactics.find(t=>t.id===c.tactic).name],["現在順位",rn+"位 "+(rd===0?"→":rd>0?"↑":"↓")],["サポーター増減",(sd>0?"+":"")+Math.round(sd).toLocaleString()+"人"],["資金増減",(md>0?"+":"")+Math.round(md).toLocaleString()+"万円"]].map(x=>"<div class='stat-row'><span>"+x[0]+"</span><strong>"+x[1]+"</strong></div>").join("");renderDeadline();renderLineup();renderSquad();renderTactics();renderLeague();renderMarket();renderGrowth();renderLog()}
+function renderDeadline(){let msgs=windowMsg(),html=msgs.length?("<div class='warnbox'>"+msgs.join("<br>")+"</div>"):"";$("deadlineBox").innerHTML=html}
+function posRank(p){return{GK:0,DF:1,MF:2,FW:3}[p.pos]??9}function roleRank(r){return r==="starter"?0:r==="bench"?1:2}
 function setRole(id,role){let c=uc(),p=c.players.find(x=>x.id===id);if(!p)return;if(role==="starter"&&c.players.filter(x=>x.role==="starter").length>=11&&p.role!=="starter"){alert("スタメンは11人までです。");return}if(role==="bench"&&c.players.filter(x=>x.role==="bench").length>=7&&p.role!=="bench"){alert("ベンチは7人までです。");return}p.role=role;render()}
-function renderLineup(){let c=uc(),st=c.players.filter(p=>p.role==="starter"),be=c.players.filter(p=>p.role==="bench"),out=c.players.filter(p=>p.role==="out"),n=need(c),b=balance(c);$("lineupSummary").innerHTML="<div><strong>スタメン "+st.length+"/11</strong>　ベンチ "+be.length+"/7　ベンチ外 "+out.length+"</div><div>必要構成：GK"+n.GK+" / DF"+n.DF+" / MF"+n.MF+" / FW"+n.FW+"</div><div class='"+(b.warn.length?"warn":"")+"'>現在構成：GK"+b.counts.GK+" / DF"+b.counts.DF+" / MF"+b.counts.MF+" / FW"+b.counts.FW+(b.warn.length?"　※バランス不足あり":"")+"</div>";let rows=[...c.players].sort((a,b)=>roleRank(a.role)-roleRank(b.role)||posRank(a)-posRank(b)||b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+(p.root||"日本")+"</td><td>"+p.pos+"</td><td>"+p.age+"</td><td>"+p.overall+"</td><td>"+p.type+"</td><td><div class='actions'><button class='small "+(p.role==="starter"?"activeChoice":"")+"' data-role='"+p.id+":starter'>スタメン</button><button class='small "+(p.role==="bench"?"activeChoice":"")+"' data-role='"+p.id+":bench'>ベンチ</button><button class='small "+(p.role==="out"?"activeChoice":"")+"' data-role='"+p.id+":out'>外</button></div></td></tr>").join("");$("lineupTable").innerHTML="<thead><tr><th>名前</th><th>ルーツ</th><th>位置</th><th>年齢</th><th>総合</th><th>タイプ</th><th>起用</th></tr></thead><tbody>"+rows+"</tbody>";document.querySelectorAll("[data-role]").forEach(btn=>btn.onclick=function(){let a=this.dataset.role.split(":");setRole(a[0],a[1])})}
-function renderSquad(){let rows=[...uc().players].sort((a,b)=>b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+(p.root||"日本")+"</td><td>"+p.pos+"</td><td>"+p.age+"</td><td><span class='badge'>"+p.type+"</span></td><td>"+p.overall+"</td><td>"+p.potential+"</td><td>"+p.peakStart+"〜"+p.peakEnd+"歳</td><td>"+p.traits.join("・")+"</td><td>"+YM(p.wage)+"</td><td>"+(p.apps||0)+"</td><td>"+(p.goals||0)+"</td><td>"+(p.assists||0)+"</td><td>"+(p.apps?(p.ratingSum/p.apps).toFixed(2):"-")+"</td><td>"+p.contract+"年</td><td>"+(p.role==="starter"?"スタメン":p.role==="bench"?"ベンチ":"外")+"</td></tr>").join("");$("squadTable").innerHTML="<thead><tr><th>名前</th><th>ルーツ</th><th>位置</th><th>年齢</th><th>タイプ</th><th>総合</th><th>素質</th><th>ピーク</th><th>特徴</th><th>年俸</th><th>出場</th><th>得点</th><th>アシスト</th><th>平均評価</th><th>契約</th><th>起用</th></tr></thead><tbody>"+rows+"</tbody>"}
+function renderFormationBoard(){let c=uc(),st=[...c.players.filter(p=>p.role==="starter")].sort((a,b)=>posRank(a)-posRank(b)||b.overall-a.overall),lines=formations.find(f=>f.id===c.formation).lines,used=0;let html="";lines.forEach(line=>{html+="<div class='line-row'>";line.forEach(slot=>{let p=st.find(x=>detailFit(x,slot)&&!x._shown)||st.find(x=>!x._shown);if(p){p._shown=true;used++;html+="<div class='player-chip'>"+slot+"<br><strong>"+p.name+"</strong><br>"+p.overall+" / 体"+p.stamina+"</div>"}else html+="<div class='player-chip'>"+slot+"<br>未設定</div>"});html+="</div>"});st.forEach(p=>delete p._shown);$("formationBoard").innerHTML=html}
+function detailFit(p,slot){return p.detailMain===slot||p.detailSubs.includes(slot)||p.pos===simplePos(slot)}function simplePos(slot){if(slot==="GK")return"GK";if(["CB","SB","WB"].includes(slot))return"DF";if(["DMF","CMF","OMF","SMF"].includes(slot))return"MF";return"FW"}
+function renderLineup(){let c=uc(),st=c.players.filter(p=>p.role==="starter"),be=c.players.filter(p=>p.role==="bench"),out=c.players.filter(p=>p.role==="out"),n=need(c),b=balance(c);$("lineupSummary").innerHTML="<div><strong>スタメン "+st.length+"/11</strong>　ベンチ "+be.length+"/7　ベンチ外 "+out.length+"</div><div>必要構成：GK"+n.GK+" / DF"+n.DF+" / MF"+n.MF+" / FW"+n.FW+"</div><div class='"+(b.warn.length?"warn":"")+"'>現在構成：GK"+b.counts.GK+" / DF"+b.counts.DF+" / MF"+b.counts.MF+" / FW"+b.counts.FW+(b.warn.length?"　※バランス不足あり":"")+"</div>";renderFormationBoard();let rows=[...c.players].sort((a,b)=>roleRank(a.role)-roleRank(b.role)||posRank(a)-posRank(b)||b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+(p.root||"日本")+"</td><td>"+p.pos+"/"+p.detailMain+"</td><td>"+p.age+"</td><td>"+p.overall+"</td><td>"+p.potential+"</td><td>"+p.stamina+"</td><td>"+p.type+"</td><td><div class='actions'><button class='small "+(p.role==="starter"?"activeChoice":"")+"' data-role='"+p.id+":starter'>スタメン</button><button class='small "+(p.role==="bench"?"activeChoice":"")+"' data-role='"+p.id+":bench'>ベンチ</button><button class='small "+(p.role==="out"?"activeChoice":"")+"' data-role='"+p.id+":out'>外</button></div></td></tr>").join("");$("lineupTable").innerHTML="<thead><tr><th>名前</th><th>ルーツ</th><th>位置</th><th>年齢</th><th>総合</th><th>素質</th><th>体力</th><th>タイプ</th><th>起用</th></tr></thead><tbody>"+rows+"</tbody>";document.querySelectorAll("[data-role]").forEach(btn=>btn.onclick=function(){let a=this.dataset.role.split(":");setRole(a[0],a[1])})}
+function renderSquad(){let rows=[...uc().players].sort((a,b)=>b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+(p.root||"日本")+"</td><td>"+p.pos+"/"+p.detailMain+"</td><td>"+p.detailSubs.join("・")+"</td><td>"+p.age+"</td><td><span class='badge'>"+p.type+"</span></td><td>"+p.overall+"</td><td>"+p.potential+"</td><td>"+p.stamina+"</td><td>"+p.peakStart+"〜"+p.peakEnd+"歳</td><td>"+YM(p.wage)+"</td><td>"+(p.apps||0)+"</td><td>"+(p.goals||0)+"</td><td>"+(p.assists||0)+"</td><td>"+(p.apps?(p.ratingSum/p.apps).toFixed(2):"-")+"</td><td>"+p.contract+"年</td></tr>").join("");$("squadTable").innerHTML="<thead><tr><th>名前</th><th>ルーツ</th><th>主位置</th><th>サブ</th><th>年齢</th><th>タイプ</th><th>総合</th><th>素質</th><th>体力</th><th>ピーク</th><th>年俸</th><th>出場</th><th>得点</th><th>アシスト</th><th>平均評価</th><th>契約</th></tr></thead><tbody>"+rows+"</tbody>"}
 function renderTactics(){let c=uc();$("formationSelect").value=c.formation;$("tacticSelect").value=c.tactic;$("formationDesc").textContent=formations.find(f=>f.id===c.formation).desc;$("tacticDesc").textContent=tactics.find(t=>t.id===c.tactic).desc;$("tacticMaturity").innerHTML=tactics.map(t=>"<div class='stat-row'><span>"+t.name+"</span><strong>"+(c.tacticExp[t.id]||0)+"/100</strong></div>").join("")}
 function renderLeague(){let rows=rank().map((c,i)=>"<tr><td>"+(i+1)+"</td><td>"+c.name+(c.isUser?" ★":"")+"</td><td>"+c.points+"</td><td>"+c.win+"</td><td>"+c.draw+"</td><td>"+c.lose+"</td><td>"+c.gf+"</td><td>"+c.ga+"</td><td>"+(c.gf-c.ga)+"</td></tr>").join("");$("leagueTable").innerHTML="<thead><tr><th>順位</th><th>クラブ</th><th>勝点</th><th>勝</th><th>分</th><th>敗</th><th>得</th><th>失</th><th>差</th></tr></thead><tbody>"+rows+"</tbody>"}
-function renderMarket(){$("marketNote").textContent=canMarket()?"現在は補強期間です。通常補強が可能です。":"現在は通常補強期間外です。";$("marketList").innerHTML=S.market.map(p=>"<div class='market-card'><div class='row'><strong>"+p.name+"</strong><span class='badge'>"+p.type+"</span></div><div>"+(p.root||"日本")+" / "+p.age+"歳 / "+p.pos+" / 総合"+p.overall+" / 素質"+p.potential+" / ピーク"+p.peakStart+"〜"+p.peakEnd+"歳</div><div class='muted'>特徴："+p.traits.join("・")+" / 想定年俸："+YM(p.wage)+"</div><button data-sign='"+p.id+"' class='primary'>獲得する</button></div>").join("");document.querySelectorAll("[data-sign]").forEach(btn=>btn.onclick=function(){sign(this.dataset.sign)})}
+function renderMarket(){let msgs=windowMsg();$("marketWarning").innerHTML=msgs.length?"<div class='warnbox'>"+msgs.join("<br>")+"</div>":"<div class='goodbox'>現在の月："+S.month+"月。補強カテゴリごとに可否が変わります。</div>";$("marketNote").textContent="スカウト更新費用："+YM(300+S.scoutRefreshCount*150)+"。補強候補は翌シーズンにも更新されます。";let list=S.market.filter(p=>marketFilter==="all"||p.category===marketFilter);$("marketList").innerHTML=list.map(p=>"<div class='market-card'><div class='row'><strong>"+p.name+"</strong><span class='badge'>"+labelCat(p.category)+"</span></div><div>"+(p.root||"日本")+" / "+p.age+"歳 / "+p.pos+"/"+p.detailMain+" / 総合"+p.overall+" / 素質"+p.potential+" / ピーク"+p.peakStart+"〜"+p.peakEnd+"歳</div><div class='muted'>特徴："+p.traits.join("・")+" / 想定年俸："+YM(p.wage)+" / "+(canSign(p.category)?"獲得可":"期間外")+"</div><button data-sign='"+p.id+"' class='primary' "+(canSign(p.category)?"":"disabled")+">獲得する</button></div>").join("");document.querySelectorAll("[data-sign]").forEach(btn=>btn.onclick=function(){sign(this.dataset.sign)})}
+function renderGrowth(){let items=[];uc().players.forEach(p=>(p.growthLog||[]).slice(0,4).forEach(g=>items.push({p,g})));items=items.sort((a,b)=>Math.abs(b.g.delta)-Math.abs(a.g.delta)).slice(0,20);$("growthBox").innerHTML=items.length?items.map(x=>"<div class='log-item'><strong>"+x.p.name+"</strong>　"+x.g.date+"<br><span class='"+(x.g.delta>=2?"bigup":x.g.delta<=-2?"bigdown":"")+"'>"+x.g.text+"</span></div>").join(""):"<div class='muted'>まだ成長履歴はありません。</div>"}
 function renderLog(){$("logList").innerHTML=S.logs.map(l=>"<div class='log-item'><strong>"+l.date+"</strong><br>"+l.text+"</div>").join("")}
-function monthSkip(){let before=rank().findIndex(x=>x.id===S.userClubId)+1,w=uc().win,d=uc().draw,l=uc().lose;for(let i=0;i<4&&S.round<=S.schedule.length;i++)playRound();let after=rank().findIndex(x=>x.id===S.userClubId)+1;log("1か月のまとめ："+(uc().win-w)+"勝"+(uc().draw-d)+"分"+(uc().lose-l)+"敗。順位は"+before+"位→"+after+"位。");render()}
-function setup(){cities.forEach(c=>{let o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("citySelect").appendChild(o)});formations.forEach(f=>{let o=document.createElement("option");o.value=f.id;o.textContent=f.name;$("formationSelect").appendChild(o)});tactics.forEach(t=>{let o=document.createElement("option");o.value=t.id;o.textContent=t.name;$("tacticSelect").appendChild(o)});$("citySelect").onchange=function(){let c=selectedCityObj();$("cityInput").value=c.name;$("clubInput").value=clubName(c)};$("rerollBtn").onclick=setSuggestedClub;$("startBtn").onclick=startGame;$("saveBtn").onclick=save;$("loadBtn").onclick=load;$("newGameBtn").onclick=function(){if(!S||confirm("現在のデータを破棄して新しく始めますか？")){S=null;$("gameScreen").classList.remove("active");$("startScreen").classList.add("active");setSuggestedClub()}};$("playBtn").onclick=playRound;$("nextSeasonBtn").onclick=nextSeason;$("monthBtn").onclick=monthSkip;$("endBtn").onclick=function(){while(S.round<=S.schedule.length)playRound()};$("autoLineupBtn").onclick=function(){autoLineup(uc());log("おすすめ選出でスタメンとベンチを組み直しました。");render()};$("clearLineupBtn").onclick=function(){uc().players.forEach(p=>p.role="out");render()};$("trainBtn").onclick=train;$("formationSelect").onchange=function(){uc().formation=this.value;autoLineup(uc());log("フォーメーションを"+formations.find(f=>f.id===this.value).name+"に変更し、編成をおすすめ選出しました。");render()};$("tacticSelect").onchange=function(){uc().tactic=this.value;log("戦術を"+tactics.find(t=>t.id===this.value).name+"に変更しました。");render()};document.querySelectorAll(".tab").forEach(btn=>btn.onclick=function(){document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));this.classList.add("active");$("tab-"+this.dataset.tab).classList.add("active")});setSuggestedClub()}
+function monthSkip(){let before=rank().findIndex(x=>x.id===S.userClubId)+1,w=uc().win,d=uc().draw,l=uc().lose;for(let i=0;i<4&&S.round<=S.schedule.length;i++)playRound();runDailyTraining(2,false);let after=rank().findIndex(x=>x.id===S.userClubId)+1;log("1か月のまとめ："+(uc().win-w)+"勝"+(uc().draw-d)+"分"+(uc().lose-l)+"敗。順位は"+before+"位→"+after+"位。");render()}
+function setup(){cities.forEach(c=>{let o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("citySelect").appendChild(o)});formations.forEach(f=>{let o=document.createElement("option");o.value=f.id;o.textContent=f.name;$("formationSelect").appendChild(o)});tactics.forEach(t=>{let o=document.createElement("option");o.value=t.id;o.textContent=t.name;$("tacticSelect").appendChild(o)});$("citySelect").onchange=function(){let c=cityObj(this.value);$("cityInput").value=c.name;$("clubInput").value=clubName(c)};$("rerollBtn").onclick=setSuggested;$("startBtn").onclick=startGame;$("saveBtn").onclick=save;$("loadBtn").onclick=load;$("newGameBtn").onclick=function(){if(!S||confirm("現在のデータを破棄して新しく始めますか？")){S=null;$("gameScreen").classList.remove("active");$("startScreen").classList.add("active");setSuggested()}};$("playBtn").onclick=playRound;$("nextSeasonBtn").onclick=nextSeason;$("monthBtn").onclick=monthSkip;$("endBtn").onclick=function(){while(S.round<=S.schedule.length)playRound()};$("autoNowBtn").onclick=function(){autoLineup(uc(),"now");log("実力重視でおすすめ編成しました。");render()};$("autoBalanceBtn").onclick=function(){autoLineup(uc(),"balance");log("バランス重視でおすすめ編成しました。");render()};$("autoYouthBtn").onclick=function(){autoLineup(uc(),"youth");log("若手中心でおすすめ編成しました。");render()};$("clearLineupBtn").onclick=function(){uc().players.forEach(p=>p.role="out");render()};$("subPolicySelect").onchange=function(){uc().subPolicy=this.value;log("交代方針を変更しました。");render()};$("trainBtn").onclick=function(){runDailyTraining(1,true)};$("refreshScoutBtn").onclick=refreshScout;$("formationSelect").onchange=function(){uc().formation=this.value;autoLineup(uc(),"balance");log("フォーメーションを"+formations.find(f=>f.id===this.value).name+"に変更し、バランス重視で編成しました。");render()};$("tacticSelect").onchange=function(){uc().tactic=this.value;log("戦術を"+tactics.find(t=>t.id===this.value).name+"に変更しました。");render()};$("trainingSelect").onchange=function(){S.trainingMode=this.value;log("育成方針を変更しました。未実行の日は自動実行されます。");render()};document.querySelectorAll(".segment button").forEach(btn=>btn.onclick=function(){marketFilter=this.dataset.market;document.querySelectorAll(".segment button").forEach(b=>b.classList.remove("activeChoice"));this.classList.add("activeChoice");renderMarket()});document.querySelectorAll(".tab").forEach(btn=>btn.onclick=function(){document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));this.classList.add("active");$("tab-"+this.dataset.tab).classList.add("active")});setSuggested()}
 setup();
 })();
 </script>
