@@ -31,7 +31,7 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
 .tab{white-space:nowrap;border-radius:999px}.tab.active{background:var(--main-dark);color:#fff;border-color:var(--main-dark)}
 .tab-panel{display:none}.tab-panel.active{display:block}
 .stat-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.stat-row strong{text-align:right}
-.match-result{line-height:1.8;white-space:pre-wrap}
+.match-result{line-height:1.8;white-space:pre-wrap;word-break:break-word}
 .table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:860px}th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:13px;vertical-align:middle}th{color:var(--muted);font-weight:900;background:#f8fbf8}
 .badge{display:inline-block;padding:3px 7px;border-radius:999px;font-size:12px;background:#edf7ed;color:var(--main-dark);border:1px solid #cbe8ce}
 .warnbox{padding:12px;background:#fff8e9;border:1px solid #f0d199;border-radius:14px;color:#714600;line-height:1.6;font-weight:800;margin-bottom:12px}
@@ -47,26 +47,26 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
 .player-chip{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 6px;font-size:11px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.05);min-height:58px;display:flex;flex-direction:column;justify-content:center}
 .modal{display:none;position:fixed;z-index:99;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.45);padding:18px;overflow:auto}
 .modal.active{display:block}
-.modal-inner{max-width:720px;margin:40px auto;background:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal-inner{max-width:720px;margin:40px auto;background:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.25);line-height:1.75}
 .modal-close{float:right}
 .money-plus{color:#16823a;font-weight:900}.money-minus{color:#b33a3a;font-weight:900}
 @media(max-width:720px){
   .club-header{flex-direction:column}.grid.two,.grid.three{grid-template-columns:1fr}.hero{margin:10px auto;padding:18px}.hero h1{font-size:24px}.tabs{top:55px}.screen{padding:12px}.club-header h2{font-size:25px}
   table{min-width:820px}th,td{font-size:12px}.topbar{align-items:flex-start}.line-row.count-5{grid-template-columns:repeat(5,62px)}.line-row.count-4{grid-template-columns:repeat(4,74px)}
 }
-</style>
+.money-plus{color:#16823a;font-weight:900}.money-minus{color:#b33a3a;font-weight:900}.growth-up{color:#16823a;font-weight:900}.growth-down{color:#b33a3a;font-weight:900}</style>
 </head>
 <body>
 <div id="app">
 <header class="topbar">
-  <div><div class="game-title">育成が楽しいサッカークラブ運営ゲーム</div><div class="version">v0.0.12 / ブラウザ試作版</div></div>
+  <div><div class="game-title">育成が楽しいサッカークラブ運営ゲーム</div><div class="version">v0.0.14 / ブラウザ試作版</div></div>
   <div class="top-actions"><button id="saveBtn" class="ghost">保存</button><button id="loadBtn" class="ghost">読込</button><button id="newGameBtn" class="ghost">新しく始める</button></div>
 </header>
 
 <section id="startScreen" class="screen active">
   <div class="hero">
     <h1>小さなクラブを、時間をかけて育てる。</h1>
-    <p>v0.0.12では、トップ画面を整理し、年間収支とキャッシュフローを分離。資金増減の内訳、試合リザルト、移籍期間、契約更新、素質上限、スタジアム工事期間を修正しました。</p>
+    <p>v0.0.14では、進行ボタンの意味を明確化し、キャンプ内容、年間成長まとめ、交渉印象回復通知を追加しました。</p>
     <div class="setup-card">
       <label>代表クラブの本拠地を選ぶ</label><select id="citySelect"></select>
       <label>本拠地名</label><input id="cityInput" placeholder="例：名古屋、新宿、調布">
@@ -92,15 +92,15 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
   </div>
 
   <nav class="tabs">
-    <button data-tab="home" class="tab active">ホーム</button><button data-tab="club" class="tab">クラブ</button><button data-tab="lineup" class="tab">編成</button><button data-tab="squad" class="tab">選手</button>
-    <button data-tab="transfer" class="tab">移籍</button><button data-tab="finance" class="tab">経営</button><button data-tab="staff" class="tab">監督</button><button data-tab="stadium" class="tab">施設</button><button data-tab="league" class="tab">順位</button><button data-tab="log" class="tab">日誌</button>
+    <button data-tab="home" class="tab active">ホーム</button><button data-tab="club" class="tab">クラブ</button><button data-tab="lineup" class="tab">編成</button><button data-tab="squad" class="tab">選手</button><button data-tab="growth" class="tab">成長</button>
+    <button data-tab="transfer" class="tab">移籍</button><button data-tab="finance" class="tab">経営</button><button data-tab="settlement" class="tab">決算</button><button data-tab="staff" class="tab">監督</button><button data-tab="stadium" class="tab">施設</button><button data-tab="league" class="tab">順位</button><button data-tab="log" class="tab">日誌</button>
   </nav>
 
   <main>
     <section id="tab-home" class="tab-panel active">
       <div id="phaseBox"></div>
       <div class="grid two">
-        <div class="card"><h3>次の行動</h3><div id="nextText" class="large"></div><div class="actions"><button id="advanceBtn" class="primary">1週間進める</button><button id="monthBtn">1か月進める</button><button id="seasonBtn">期間をまとめて進める</button></div></div>
+        <div class="card"><h3>次の行動</h3><div id="nextText" class="large"></div><div class="actions"><button id="advanceBtn" class="primary">1週間進める</button><button id="monthBtn">1か月進める</button><button id="seasonBtn">次の中断期間まで</button></div></div>
         <div class="card"><h3>重要情報</h3><div id="topImportant"></div></div>
       </div>
       <div class="card"><h3>直近の出来事</h3><div id="latestBox" class="match-result">まだ試合はありません。</div></div>
@@ -119,6 +119,10 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
 
     <section id="tab-squad" class="tab-panel"><div class="card"><h3>所属選手</h3><div class="table-wrap"><table id="squadTable"></table></div></div></section>
 
+    <section id="tab-growth" class="tab-panel">
+      <div class="card"><h3>今季成長まとめ</h3><div id="growthSummaryBox"></div></div>
+    </section>
+
     <section id="tab-transfer" class="tab-panel">
       <div class="card"><h3>移籍・契約</h3><div id="transferNotice"></div>
         <div class="segment"><button data-filter="all" class="activeChoice">一覧</button><button data-filter="free">自由契約</button><button data-filter="student">学生</button><button data-filter="overseasYouth">海外若手</button><button data-filter="youth">ユース</button><button data-filter="club">他チーム</button><button data-filter="negotiating">交渉中</button></div>
@@ -132,6 +136,10 @@ select,input{width:100%;border:1px solid var(--line);border-radius:14px;padding:
       <div class="card"><h3>キャッシュフロー見込</h3><div id="cashflowBox"></div></div>
       <div class="card"><h3>今週の資金増減内訳</h3><div id="moneyLogBox"></div></div>
       <div class="card"><h3>スポンサー</h3><div id="sponsorBox" class="market-list"></div></div>
+    </section>
+
+    <section id="tab-settlement" class="tab-panel">
+      <div class="card"><h3>今季決算・資金推移</h3><div id="settlementBox"></div></div>
     </section>
 
     <section id="tab-staff" class="tab-panel">
@@ -165,7 +173,7 @@ const fn=["翔","蓮","湊","樹","翼","悠","蒼","律","岳","仁","魁","司
 const ln=["橘","榊","乾","東","南","西","北","城","神","滝","鷹","鷲","峰","桂","牧","椿","柊","桐","柳","泉","森谷","松原","藤堂","杉森","片桐","神谷","久世","黒川","成瀬","三浦","田嶋","早坂","宮原","遠宮","三園","黒崎","大槻","佐伯","長瀬","風間","御影","白鳥","宇佐美","小鳥遊","一ノ瀬","二階堂","九条","雨宮","朝倉","御子柴","榊原","神楽坂","橘田","黒羽","真壁","相楽","月城","鳴海"];
 const ff=["ジョアン","ルーカス","ディエゴ","マルコ","アレックス","ニコラ","ミラン","パブロ","イヴァン","ドラガン"],fl=["マテウス","バレット","サントス","ヴィエラ","ロペス","イリッチ","ラドミル","セラーノ","ペトロフ","ヴコヴィッチ"];
 const roots=[["日本","jp",78],["日本ルーツMIX","half",5],["欧州","foreign",6],["南米","foreign",5],["アフリカ","foreign",4],["東アジア","foreign",2]];
-const ptypes=[["GK","足元のうまいGK",[22,31],["GK"],{defense:75,tech:65,physical:67,decision:70,mental:72},[280,700],"club"],["DF","守備職人CB",[24,32],["CB","SB"],{defense:78,physical:78,decision:72,mental:74},[300,760],"club"],["MF","学生候補MF",[18,22],["CMF","DMF","OMF"],{attack:58,defense:58,tech:66,speed:62,physical:60,decision:64,mental:66},[120,380],"student"],["MF","左足司令塔",[34,39],["CMF","OMF","DMF"],{attack:56,defense:50,tech:76,speed:34,physical:45,decision:80,mental:78},[260,760],"free"],["FW","フィジカル決定力FW",[23,28],["FW"],{attack:76,tech:58,speed:62,physical:82,decision:66,mental:69},[350,900],"club"],["MF","俊足サイド",[20,27],["WG","SMF","WB"],{attack:68,defense:43,tech:62,speed:84,physical:58,decision:56,mental:58},[260,650],"club"],["MF","ユース天才肌",[17,19],["OMF","WG","CMF"],{attack:56,defense:38,tech:72,speed:64,physical:45,decision:48,mental:50},[120,300],"youth"],["FW","元代表ベテラン",[36,42],["FW","OMF"],{attack:61,defense:45,tech:70,speed:35,physical:51,decision:76,mental:82},[300,900],"free"],["FW","決定力ストライカー",[24,31],["FW"],{attack:80,defense:28,tech:68,speed:66,physical:78,decision:63,mental:64},[800,1900],"club"],["MF","海外若手候補",[18,21],["WG","OMF","CMF"],{attack:60,defense:45,tech:68,speed:72,physical:60,decision:55,mental:56},[180,520],"overseasYouth"]];
+const ptypes=[["GK","足元のうまいGK",[22,31],["GK"],{defense:75,tech:65,physical:67,decision:70,mental:72},[280,700],"club"],["DF","守備職人CB",[24,32],["CB","SB"],{defense:78,physical:78,decision:72,mental:74},[300,760],"club"],["MF","学生候補MF",[18,22],["CMF","DMF","OMF"],{attack:58,defense:58,tech:66,speed:62,physical:60,decision:64,mental:66},[120,380],"student"],["MF","左足司令塔",[34,39],["CMF","OMF","DMF"],{attack:56,defense:50,tech:76,speed:34,physical:45,decision:80,mental:78},[260,760],"free"],["DF","自由契約の若手DF",[20,25],["CB","SB"],{defense:62,physical:62,speed:58,decision:55,mental:56},[120,360],"free"],["MF","自由契約の中堅MF",[25,31],["CMF","DMF","SMF"],{attack:56,defense:58,tech:61,speed:57,physical:59,decision:60,mental:61},[180,480],"free"],["FW","自由契約の控えFW",[22,29],["FW","WG"],{attack:62,tech:56,speed:61,physical:58,decision:54,mental:55},[160,440],"free"],["FW","フィジカル決定力FW",[23,28],["FW"],{attack:76,tech:58,speed:62,physical:82,decision:66,mental:69},[350,900],"club"],["MF","俊足サイド",[20,27],["WG","SMF","WB"],{attack:68,defense:43,tech:62,speed:84,physical:58,decision:56,mental:58},[260,650],"club"],["MF","ユース天才肌",[17,19],["OMF","WG","CMF"],{attack:56,defense:38,tech:72,speed:64,physical:45,decision:48,mental:50},[120,300],"youth"],["FW","元代表ベテラン",[36,42],["FW","OMF"],{attack:61,defense:45,tech:70,speed:35,physical:51,decision:76,mental:82},[300,900],"free"],["FW","決定力ストライカー",[24,31],["FW"],{attack:80,defense:28,tech:68,speed:66,physical:78,decision:63,mental:64},[800,1900],"club"],["MF","海外若手候補",[18,21],["WG","OMF","CMF"],{attack:60,defense:45,tech:68,speed:72,physical:60,decision:55,mental:56},[180,520],"overseasYouth"]];
 const managerNames=["森保 一太","長谷川 健二","片野坂 知宏","ミラン・ラドミル","ドラガン・ヴコヴィッチ","風間 宗一","黒崎 章人","秋山 剛","ペトロ・ミハイロ","ジョアン・セラーノ"];
 const sponsorNames=["尾張食品","東海物流","名古屋電装","グリーン住宅","三河銀行","日本メディアHD","アジア航空","ワールドモーターズ","サクラ通信","大都生命","港町水産","北斗エナジー","ユニオン商事","グローバルテック","セントラル不動産"];
 let S=null,marketFilter="all";
@@ -177,8 +185,13 @@ function setColor(v){document.documentElement.style.setProperty("--accent",v||"#
 function setSuggested(){let c=P(cities);$("citySelect").value=c.name;$("cityInput").value=c.name;$("clubInput").value=clubName(c);updateEmblemPreview()}
 function ovrRaw(p){let s=p.stats,w=p.pos==="FW"?{attack:.30,tech:.16,speed:.15,physical:.16,decision:.13,mental:.10}:p.pos==="MF"?{attack:.15,defense:.13,tech:.24,speed:.10,physical:.10,decision:.20,mental:.08}:p.pos==="DF"?{defense:.32,speed:.10,physical:.20,decision:.20,tech:.08,mental:.10}:{defense:.35,tech:.14,physical:.18,decision:.22,mental:.11};let v=0;Object.keys(w).forEach(k=>v+=(s[k]||50)*w[k]);return Math.round(CL(v,30,95))}
 function calcOverall(p){return Math.min(ovrRaw(p),p.potential||95)}
-function makePlayer(type,clubId,cat){let t=type||P(ptypes),category=cat||t[6],root=pickRoot(category),age=R(t[2][0],t[2][1]),st={attack:45,defense:45,tech:45,speed:45,physical:45,decision:45,mental:45};Object.assign(st,t[4]);Object.keys(st).forEach(k=>st[k]=CL(st[k]+R(-6,6),20,95));if(root[0]==="南米"){st.attack+=2;st.tech+=2}if(root[0]==="アフリカ"){st.speed+=3;st.physical+=3}if(root[0]==="日本"){st.decision+=2;st.mental+=1}let raw=ovrRaw({pos:t[0],stats:st}),pot=CL(raw+R(0,14),45,95),p={id:uid(),name:pname(root),root:root[0],pos:t[0],detailMain:P(t[3]),detailSubs:t[3].filter(x=>Math.random()<.4),age,type:t[1],category,stats:st,overall:0,potential:pot,peakStart:R(24,29),peakEnd:R(30,36),wage:Math.round(R(t[5][0],t[5][1])/10)*10,contract:R(1,3),clubId,role:"out",apps:0,goals:0,assists:0,ratingSum:0,lastRating:0,stamina:100,scouted:category!=="club",originClub:null,negotiating:false,lastOffer:null,tries:0,joinMonth:null};p.overall=calcOverall(p);p.wage+=Math.max(0,p.overall-65)*18;p.wage=Math.round(p.wage/10)*10;return addCosts(p)}
-function addCosts(p){p.signingFee=0;p.transferFee=0;if(p.category==="student")p.signingFee=R(0,80);if(p.category==="overseasYouth")p.signingFee=R(30,180);if(p.category==="club")p.transferFee=Math.round((p.overall*p.overall*R(3,7)+Math.max(0,p.potential-p.overall)*80)/10)*10;p.initialCost=p.signingFee+p.transferFee;p.offerYears=R(1,4);return p}
+function makePlayer(type,clubId,cat){let t=type||P(ptypes),category=cat||t[6],root=pickRoot(category),age=R(t[2][0],t[2][1]),st={attack:45,defense:45,tech:45,speed:45,physical:45,decision:45,mental:45};Object.assign(st,t[4]);Object.keys(st).forEach(k=>st[k]=CL(st[k]+R(-6,6),20,95));if(root[0]==="南米"){st.attack+=2;st.tech+=2}if(root[0]==="アフリカ"){st.speed+=3;st.physical+=3}if(root[0]==="日本"){st.decision+=2;st.mental+=1}let raw=ovrRaw({pos:t[0],stats:st}),pot=CL(raw+R(0,14),45,95),p={id:uid(),name:pname(root),root:root[0],pos:t[0],detailMain:P(t[3]),detailSubs:t[3].filter(x=>Math.random()<.4),age,type:t[1],category,stats:st,overall:0,potential:pot,peakStart:R(24,29),peakEnd:R(30,36),wage:Math.round(R(t[5][0],t[5][1])/10)*10,contract:R(1,3),clubId,role:"out",apps:0,goals:0,assists:0,ratingSum:0,lastRating:0,stamina:100,scouted:category!=="club",originClub:null,negotiating:false,lastOffer:null,tries:0,joinMonth:null};p.overall=calcOverall(p);p.seasonStartOverall=p.overall;p.seasonStartPotential=p.potential;p.seasonHighOverall=p.overall;p.seasonLowOverall=p.overall;p.wage+=Math.max(0,p.overall-65)*18;p.wage=Math.round(p.wage/10)*10;return addCosts(p)}
+function addCosts(p){p.signingFee=0;p.transferFee=0;if(p.category==="student")p.signingFee=R(0,80);if(p.category==="overseasYouth")p.signingFee=R(30,180);if(p.category==="club"){
+    let base=(p.overall-45)*R(25,70)+Math.max(0,p.potential-p.overall)*R(40,90);
+    if(p.age>=30)base*=0.55;
+    if(p.apps<8)base*=0.70;
+    p.transferFee=Math.round(CL(base,80,8500)/10)*10;
+  }p.initialCost=p.signingFee+p.transferFee;p.offerYears=R(1,4);return p}
 function makeManager(lv){lv=lv||R(48,75);return{id:uid(),name:P(managerNames),attack:CL(lv+R(-10,15),30,95),defense:CL(lv+R(-10,15),30,95),training:CL(lv+R(-10,15),30,95),motivation:CL(lv+R(-10,15),30,95),fit:P(["若手育成","堅守速攻","ポゼッション","ベテラン重視","バランス"]),wage:Math.round((lv*8+R(100,450))/10)*10,contract:R(1,3),releaseFee:Math.round((lv*12+R(100,600))/10)*10}}
 function makeSponsor(rank,supporters,typeKey){let scale=supporters>16000?"国際的大企業":supporters>9000?"全国企業":supporters>4500?"地域有力企業":"地場企業",base=scale==="国際的大企業"?R(20000,80000):scale==="全国企業"?R(8000,22000):scale==="地域有力企業"?R(3000,9000):R(500,3000);if(rank<=3)base=Math.round(base*1.25);if(typeKey==="big")base=Math.round(base*1.15);let pay=P(["年一括","月割"]);return{id:uid(),name:P(sponsorNames),scale,annual:base,contract:R(1,3),payType:pay,paidThisSeason:false}}
 function wages(c){return c.players.reduce((s,p)=>s+(p.wage||0),0)+(c.manager?c.manager.wage:0)}
@@ -187,7 +200,7 @@ function expenseEst(c){let w=wages(c),staff=Math.round((c.training+c.youth+c.sco
 function cashFlowForecast(c){return c.money + incomeEst(c).total - expenseEst(c).total - (c.reserved||0)}
 function usableMoney(c){let buffer=Math.max(2500,Math.round(expenseEst(c).total*.18));return Math.max(0,c.money-(c.reserved||0)-buffer)}
 function makeClub(cityName,typeKey,isUser,custom){let co=cityObj(cityName),key=(typeKey&&typeKey!=="random")?typeKey:P(Object.keys(clubTypes)),t=clubTypes[key],c={id:uid(),name:custom||clubName(co),city:co.name,passion:co.passion,patience:co.patience,typeKey:key,typeLabel:t.label,goal:t.goal,expect:t.expect,isUser,money:t.budget+R(-1200,2200),supporters:R(2800,6200)+(key==="big"?2500:0),training:R(30,48),youth:R(30,48),scout:R(30,52),stadium:R(5000,7500),league:"J3",division:3,formation:"442_flat",tactic:"balance",subPolicy:"normal",manager:makeManager(R(48,72)),sponsors:[],players:[],points:0,win:0,draw:0,lose:0,gf:0,ga:0,reserved:0,construction:null};c.sponsors=[makeSponsor(8,c.supporters,c.typeKey)];return c}
-function addSquad(c){let mix=["GK","DF","DF","DF","DF","MF","MF","MF","FW","FW"];for(let i=0;i<28;i++){let t=ptypes.find(x=>x[0]===mix[i%mix.length])||P(ptypes);c.players.push(makePlayer(t,c.id,t[6]))}autoLineup(c,"balance")}
+function addSquad(c){let mix=["GK","DF","DF","DF","DF","MF","MF","MF","FW","FW"];for(let i=0;i<28;i++){let t=ptypes.find(x=>x[0]===mix[i%mix.length])||P(ptypes);c.players.push(makePlayer(t,c.id,t[6]))}autoLineup(c,"balance");c.players.forEach(p=>{p.seasonStartOverall=p.overall;p.seasonStartPotential=p.potential;p.seasonHighOverall=p.overall;p.seasonLowOverall=p.overall})}
 function schedule(clubs){let ids=clubs.map(c=>c.id),n=ids.length,rounds=[],arr=[...ids];for(let r=0;r<n-1;r++){let pairs=[];for(let i=0;i<n/2;i++){let a=arr[i],b=arr[n-1-i];pairs.push(i%2===0?[a,b]:[b,a])}rounds.push(pairs);arr=[arr[0],arr[n-1],...arr.slice(1,n-1)]}return rounds.concat(rounds.map(r=>r.map(p=>[p[1],p[0]])))}
 function fc(id){return S.clubs.find(c=>c.id===id)}function uc(){return fc(S.userClubId)}function form(c){return formations.find(f=>f.id===c.formation)}function need(c){return form(c).need}
 function scoreLineup(p,mode){let v=p.overall;if(mode==="youth")v+=Math.max(0,p.potential-p.overall)*.45+(25-p.age)*1.2;if(mode==="balance")v+=Math.max(0,p.potential-p.overall)*.18+(p.stamina-70)*.08;if(mode==="now")v+=(p.stamina-70)*.12;return v}
@@ -200,23 +213,163 @@ function weeksLeftInPhase(){return S.phaseEndWeek-S.week+1}
 function isOpeningRegistration(){return S.phase==="season"&&S.round<=4}
 function canTransfer(cat){if(cat==="free")return true;if(cat==="student")return S.phase==="contract"||S.phase==="transfer";if(cat==="overseasYouth")return S.phase==="transfer"||isOpeningRegistration();if(cat==="youth")return S.phase==="contract"||S.phase==="transfer";if(cat==="club")return S.phase==="transfer"||isOpeningRegistration();return false}
 function categoryPeriodText(){return "自由契約：通年交渉可 / 学生：契約更新期間〜移籍期間に内定、原則3月加入 / 海外若手：移籍期間・開幕直後登録期間に交渉、8月または1月加入 / ユース：契約更新〜移籍期間 / 他チーム：移籍期間・開幕直後登録期間"}
-function marketPool(){let arr=[];for(let i=0;i<5;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="free")),"market","free"));for(let i=0;i<5;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="student")),"market","student"));for(let i=0;i<4;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="youth")),"market","youth"));for(let i=0;i<3;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="overseasYouth")),"market","overseasYouth"));let others=S?S.clubs.filter(c=>c.id!==S.userClubId):[];let pool=[];others.forEach(c=>c.players.forEach(p=>pool.push({club:c,p})));pool.sort(()=>Math.random()-.5).slice(0,10).forEach(x=>{let p=JSON.parse(JSON.stringify(x.p));p.id=uid();p.category="club";p.originClub=x.club.name;p.scouted=false;addCosts(p);arr.push(p)});return arr}
+function marketPool(){let arr=[];let freeTypes=ptypes.filter(t=>t[6]==="free");for(let i=0;i<7;i++)arr.push(makePlayer(P(freeTypes),"market","free"));for(let i=0;i<5;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="student")),"market","student"));for(let i=0;i<4;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="youth")),"market","youth"));for(let i=0;i<3;i++)arr.push(makePlayer(P(ptypes.filter(t=>t[6]==="overseasYouth")),"market","overseasYouth"));let others=S?S.clubs.filter(c=>c.id!==S.userClubId):[];let pool=[];others.forEach(c=>c.players.forEach(p=>pool.push({club:c,p})));pool.sort(()=>Math.random()-.5).slice(0,10).forEach(x=>{let p=JSON.parse(JSON.stringify(x.p));p.id=uid();p.category="club";p.originClub=x.club.name;p.scouted=false;addCosts(p);arr.push(p)});return arr}
 function simulateMatch(h,a){let hp=power(h)+R(-9,9)+2,ap=power(a)+R(-9,9),hg=Math.max(0,Math.round((hp-50)/14+R(0,2)-R(0,1))),ag=Math.max(0,Math.round((ap-51)/14+R(0,2)-R(0,1)));if(Math.random()<.1)hg++;if(Math.random()<.1)ag++;h.gf+=hg;h.ga+=ag;a.gf+=ag;a.ga+=hg;if(hg>ag){h.win++;a.lose++;h.points+=3}else if(hg<ag){a.win++;h.lose++;a.points+=3}else{h.draw++;a.draw++;h.points++;a.points++}let he=events(h,hg),ae=events(a,ag);rate(h,hg>ag?"win":hg===ag?"draw":"lose");rate(a,ag>hg?"win":ag===hg?"draw":"lose");return{hg,ag,he,ae}}
 function events(c,goals){let st=c.players.filter(p=>p.role==="starter"),fw=st.filter(p=>p.pos==="FW"),mf=st.filter(p=>p.pos==="MF"),ev=[];for(let i=0;i<goals;i++){let scorer=P(fw.length&&Math.random()<.65?fw:st),assist=P(mf.length&&Math.random()<.75?mf:st);scorer.goals++;assist.assists++;ev.push({scorer:scorer.name,assist:assist.name})}return ev}
 function rate(c,res){let st=c.players.filter(p=>p.role==="starter"),base=res==="win"?6.7:res==="draw"?6.2:5.8;st.forEach(p=>{let r=CL(base+(p.overall-65)*.035+R(-8,10)/10,4.5,8.8);p.lastRating=r;p.apps++;p.ratingSum+=r;p.stamina=CL(p.stamina-R(12,24),20,100)});c.players.filter(p=>p.role!=="starter").forEach(p=>p.stamina=CL(p.stamina+R(4,10),20,100))}
-function runTraining(){let c=uc(),changed=[];let mentors=c.players.filter(p=>p.age>=34&&p.overall>=60).length;let targets=c.players.sort((a,b)=>(b.potential-b.overall)-(a.potential-a.overall)).slice(0,7);targets.forEach(p=>{if(Math.random()<.45){let before=p.overall,k=P(["attack","defense","tech","speed","physical","decision"]);if(p.overall>=p.potential&&Math.random()<(.03+mentors*.01+(c.manager.training-60)*.002)){p.potential=CL(p.potential+1,45,99);changed.push(p.name+"の素質が覚醒 +1")}else if(p.overall<p.potential){p.stats[k]=CL((p.stats[k]||45)+1,20,95);p.overall=calcOverall(p);if(p.overall>before)changed.push(p.name+" 総合"+before+"→"+p.overall)}}});return changed}
+function runTraining(){
+  let c=uc(),changed=[];
+  let mentors=c.players.filter(p=>p.age>=34&&p.overall>=60).length;
+  let targets=c.players.sort((a,b)=>(b.potential-b.overall)-(a.potential-a.overall)).slice(0,7);
+  targets.forEach(p=>{
+    if(p.seasonStartOverall===undefined){p.seasonStartOverall=p.overall;p.seasonStartPotential=p.potential}
+    if(Math.random()<.45){
+      let before=p.overall,k=P(["attack","defense","tech","speed","physical","decision"]);
+      if(p.overall>=p.potential&&Math.random()<(.03+mentors*.01+(c.manager.training-60)*.002)){
+        p.potential=CL(p.potential+1,45,99);
+        changed.push(p.name+"の素質が覚醒 +1");
+      }else if(p.overall<p.potential){
+        p.stats[k]=CL((p.stats[k]||45)+1,20,95);
+        p.overall=calcOverall(p);
+        p.seasonHighOverall=Math.max(p.seasonHighOverall||p.overall,p.overall);
+        p.seasonLowOverall=Math.min(p.seasonLowOverall||p.overall,p.overall);
+        if(p.overall>before)changed.push(p.name+" 総合"+before+"→"+p.overall);
+      }
+    }
+  });
+  return changed;
+}
 function payWeekly(breakdown){let c=uc(),weekly=Math.round(expenseEst(c).total/44);c.money-=weekly;breakdown.push(["選手・監督・運営費", -weekly]);}
 function monthlySponsors(breakdown){let c=uc();if(S.week===1){c.sponsors.forEach(sp=>{if(sp.payType==="月割"){let val=Math.round(sp.annual/10);c.money+=val;breakdown.push([sp.name+" 月割スポンサー収入", val])}})}}
 function processConstruction(breakdown){let c=uc();if(c.construction){c.construction.weeksLeft--;if(c.construction.weeksLeft<=0){c.stadium+=c.construction.seats;c.reserved-=c.construction.remainingCost;c.money-=c.construction.remainingCost;breakdown.push(["スタジアム工事完了支払", -c.construction.remainingCost]);log("スタジアム拡張が完了しました。+"+c.construction.seats+"席");c.construction=null}}}
-function advanceWeek(){if(!S)return;let c=uc(),beforeMoney=c.money,beforeRank=rank().findIndex(x=>x.id===c.id)+1,beforeSup=c.supporters;S.prev={money:beforeMoney,rank:beforeRank,supporters:beforeSup};let breakdown=[],training=runTraining();monthlySponsors(breakdown);processConstruction(breakdown);let resultText="";if(S.phase==="season"){let roundPairs=S.schedule[S.round-1];if(roundPairs){let userResult=null;roundPairs.forEach(([h,a])=>{let hc=fc(h),ac=fc(a),r=simulateMatch(hc,ac);if(h===S.userClubId||a===S.userClubId){let op=fc(h===S.userClubId?a:h),home=h===S.userClubId,ug=home?r.hg:r.ag,og=home?r.ag:r.hg,ev=home?r.he:r.ae;let att=home?Math.min(c.stadium,Math.round(c.supporters*(.55+Math.random()*.25))):0,gate=home?Math.round(att*.055):0,goods=home?Math.round(att*.012+c.supporters*.004):0;c.money+=gate+goods;if(gate)breakdown.push(["入場料収入", gate]);if(goods)breakdown.push(["グッズ収入", goods]);let fan=(ug>og?R(50,160):ug===og?R(-20,60):R(-160,-40));c.supporters=Math.max(0,c.supporters+fan);breakdown.push(["サポーター増減", fan, "人"]);let scorerText=ev.length?ev.map((e,i)=>(i+1)+"点目："+e.scorer+"（アシスト："+e.assist+"）").join("\\n"):"得点者なし";let ratings=c.players.filter(p=>p.role==="starter").sort((x,y)=>posRank(x)-posRank(y)||y.lastRating-x.lastRating).map(p=>p.pos+" "+p.name+" "+p.lastRating.toFixed(1)).join("\\n");userResult={op,home,ug,og,att,gate,goods,fan,scorerText,ratings};}});if(userResult){resultText="第"+S.round+"節　"+c.name+" "+userResult.ug+"-"+userResult.og+" "+userResult.op.name+"\\n"+(userResult.home?"ホーム":"アウェー")+" / 相手順位："+(rank().findIndex(x=>x.id===userResult.op.id)+1)+"位\\n\\n【得点】\\n"+userResult.scorerText+"\\n\\n【収入】\\n観客数："+userResult.att.toLocaleString()+"人\\n入場料："+YM(userResult.gate)+"\\nグッズ："+YM(userResult.goods)+"\\n\\n【サポーター】\\n"+(userResult.fan>=0?"+":"")+userResult.fan+"人\\n\\n【トレーニング】\\n"+(training.length?training.join("\\n"):"大きな変化なし")+"\\n\\n【選手評価】\\n"+userResult.ratings;S.latest=resultText}S.round++}}else if(S.phase==="camp"){let improve=R(1,3);c.training+=improve;training.push("キャンプで練習場効果 +"+improve);resultText="キャンプを実施しました。\\n"+training.join("\\n");S.latest=resultText}else{resultText=phaseName()+"が進みました。\\n契約や移籍を確認してください。";S.latest=resultText}payWeekly(breakdown);S.lastBreakdown={before:beforeMoney,after:c.money,items:breakdown,training};S.week++;if(S.week>S.phaseEndWeek)nextPhase(breakdown);showResult(resultText,breakdown);render()}
+
+function checkNegotiationRecovery(){
+  if(!S||!S.market)return [];
+  let notices=[];
+  S.market.forEach(p=>{
+    if(p.negotiating&&p.lastTryWeek!==undefined&&currentAbsWeek()-p.lastTryWeek>=10){
+      p.tries=0;
+      p.lastOffer=null;
+      p.negotiating=false;
+      p.recoveredNotified=true;
+      notices.push(p.name+"との交渉印象が回復しました。再交渉しやすくなっています。");
+    }
+  });
+  notices.forEach(n=>log(n));
+  return notices;
+}
+function advanceWeekCore(showModal=true){if(!S)return;let c=uc(),beforeMoney=c.money,beforeRank=rank().findIndex(x=>x.id===c.id)+1,beforeSup=c.supporters;S.prev={money:beforeMoney,rank:beforeRank,supporters:beforeSup};let breakdown=[],training=runTraining();monthlySponsors(breakdown);processConstruction(breakdown);let recovery=checkNegotiationRecovery();let resultText="";if(S.phase==="season"){let roundPairs=S.schedule[S.round-1];if(roundPairs){let userResult=null;roundPairs.forEach(([h,a])=>{let hc=fc(h),ac=fc(a),r=simulateMatch(hc,ac);if(h===S.userClubId||a===S.userClubId){let op=fc(h===S.userClubId?a:h),home=h===S.userClubId,ug=home?r.hg:r.ag,og=home?r.ag:r.hg,ev=home?r.he:r.ae;let att=home?Math.min(c.stadium,Math.round(c.supporters*(.55+Math.random()*.25))):0,gate=home?Math.round(att*.055):0,goods=home?Math.round(att*.012+c.supporters*.004):0;c.money+=gate+goods;if(gate)breakdown.push(["入場料収入", gate]);if(goods)breakdown.push(["グッズ収入", goods]);let fan=(ug>og?R(50,160):ug===og?R(-20,60):R(-160,-40));c.supporters=Math.max(0,c.supporters+fan);breakdown.push(["サポーター増減", fan, "人"]);let scorerText=ev.length?ev.map((e,i)=>(i+1)+"点目："+e.scorer+"（アシスト："+e.assist+"）").join("\\n"):"得点者なし";let ratings=c.players.filter(p=>p.role==="starter").sort((x,y)=>posRank(x)-posRank(y)||y.lastRating-x.lastRating).map(p=>p.pos+" "+p.name+" "+p.lastRating.toFixed(1)).join("\\n");userResult={op,home,ug,og,att,gate,goods,fan,scorerText,ratings};}});if(userResult){resultText="第"+S.round+"節　"+c.name+" "+userResult.ug+"-"+userResult.og+" "+userResult.op.name+"\\n"+(userResult.home?"ホーム":"アウェー")+" / 相手順位："+(rank().findIndex(x=>x.id===userResult.op.id)+1)+"位\\n\\n【得点】\\n"+userResult.scorerText+"\\n\\n【収入】\\n観客数："+userResult.att.toLocaleString()+"人\\n入場料："+YM(userResult.gate)+"\\nグッズ："+YM(userResult.goods)+"\\n\\n【サポーター】\\n"+(userResult.fan>=0?"+":"")+userResult.fan+"人\\n\\n【トレーニング】\\n"+(training.length?training.join("\\n"):"大きな変化なし")+"\\n\\n【選手評価】\\n"+userResult.ratings;S.latest=resultText}S.round++}}else if(S.phase==="camp"){let improve=R(1,3);c.training+=improve;training.push("キャンプで練習場効果 +"+improve);resultText="キャンプを実施しました。\\n"+training.join("\\n");S.latest=resultText}else{resultText=phaseName()+"が進みました。\\n契約や移籍を確認してください。";S.latest=resultText}payWeekly(breakdown);S.lastBreakdown={before:beforeMoney,after:c.money,items:breakdown,training};S.week++;if(S.week>S.phaseEndWeek)nextPhase(breakdown);if(recovery&&recovery.length){resultText += "\n\n【交渉状況】\n"+recovery.join("\n")}if(showModal)showResult(resultText,breakdown,"week");render();return {text:resultText,breakdown:breakdown,before:S.lastBreakdown.before,after:S.lastBreakdown.after};}
+
+function advanceWeek(){return advanceWeekCore(true)}
+function summarizeAdvance(count,mode){
+  let startMoney=uc().money,startRank=rank().findIndex(x=>x.id===uc().id)+1,startSup=uc().supporters;
+  let startW=uc().win,startD=uc().draw,startL=uc().lose;
+  let all={},last="";
+  for(let i=0;i<count;i++){
+    let r=advanceWeekCore(false);
+    if(r&&r.text)last=r.text;
+    (r&&r.breakdown?r.breakdown:[]).forEach(x=>{
+      let key=x[0]+"|"+(x[2]||"万円");
+      all[key]=(all[key]||0)+x[1];
+    });
+  }
+  let items=Object.entries(all).map(([k,v])=>{let parts=k.split("|");return [parts[0],v,parts[1]]});
+  let endRank=rank().findIndex(x=>x.id===uc().id)+1;
+  let text=(mode==="month"?"1か月進行":"次の中断期間まで進行")+"しました。\n\n"+
+    "成績："+(uc().win-startW)+"勝 "+(uc().draw-startD)+"分 "+(uc().lose-startL)+"敗\n"+
+    "順位："+startRank+"位 → "+endRank+"位\n"+
+    "サポーター："+startSup.toLocaleString()+"人 → "+uc().supporters.toLocaleString()+"人\n\n"+
+    "最後の出来事：\n"+last;
+  S.lastBreakdown={before:startMoney,after:uc().money,items:items};
+  showResult(text,items,mode);
+  render();
+}
 function nextPhase(breakdown){if(S.phase==="season"){finishSeason(breakdown);S.phase="contract";S.week=1;S.phaseEndWeek=3;S.latest="シーズン終了。契約更新期間に入りました。"}else if(S.phase==="contract"){S.phase="transfer";S.week=1;S.phaseEndWeek=8;S.market=marketPool();S.latest="移籍期間に入りました。新戦力との交渉が可能です。"}else if(S.phase==="transfer"){S.phase="camp";S.week=1;S.phaseEndWeek=4;S.latest="キャンプ期間に入りました。開幕前の準備を進めます。"}else if(S.phase==="camp"){newSeason(breakdown)}}
 function finishSeason(breakdown){let c=uc(),r=rank().findIndex(x=>x.id===c.id)+1,bonus=Math.max(500,(13-r)*300);c.money+=bonus;if(breakdown)breakdown.push(["順位賞金",bonus]);log("シーズン終了。順位賞金 "+YM(bonus)+" を受け取りました。")}
-function newSeason(breakdown){let c=uc();S.year++;S.month=8;S.week=1;S.phase="season";S.phaseEndWeek=22;S.round=1;S.schedule=schedule(S.clubs);S.clubs.forEach(cl=>{cl.points=cl.win=cl.draw=cl.lose=cl.gf=cl.ga=0;cl.players.forEach(p=>{p.age++;p.contract=Math.max(0,p.contract-1);p.stamina=100});cl.manager.contract=Math.max(0,cl.manager.contract-1);cl.sponsors=cl.sponsors.map(sp=>{sp.contract--;sp.paidThisSeason=false;return sp}).filter(sp=>sp.contract>0);if(!cl.sponsors.length)cl.sponsors=[makeSponsor(8,cl.supporters,cl.typeKey)]});let income=0;c.sponsors.forEach(sp=>{if(sp.payType==="年一括"){income+=sp.annual;sp.paidThisSeason=true}});c.money+=income;if(breakdown)breakdown.push(["年一括スポンサー収入",income]);S.market=marketPool();S.latest="新シーズン開幕。スポンサー収入 "+YM(income)+" を受け取りました。";log("新シーズンが始まりました。")}
-function showResult(text,breakdown){let lines=breakdown.map(x=>x[0]+": "+(x[1]>=0?"+":"")+x[1].toLocaleString()+(x[2]||"万円")).join("\\n");$("modalContent").textContent=text+"\\n\\n【資金増減内訳】\\n"+(lines||"増減なし")+"\\n\\n前週資金："+YM(S.lastBreakdown.before)+"\\n今週資金："+YM(S.lastBreakdown.after)+"\\n増減："+YM(S.lastBreakdown.after-S.lastBreakdown.before);$("resultModal").classList.add("active")}
-function negotiate(p,renew){let c=uc(),maxYears=p.age<18?3:5,wage=Number(prompt("提示年俸（万円）",p.wage||400));if(!wage)return;let years=Number(prompt("契約年数（最大"+maxYears+"年）",Math.min(p.offerYears||p.contract||2,maxYears)));if(!years)return;years=CL(years,1,maxYears);let chance=45+(wage-(p.wage||400))/20+(years-2)*3+c.supporters/1000+(c.manager.motivation-60)*.3;if(p.category==="club")chance-=25;if(p.tries)chance-=p.tries*8;if(p.lastOffer&&p.lastOffer.wage===wage&&p.lastOffer.years===years)chance-=15;chance=CL(Math.round(chance),5,95);if(!confirm("交渉成功率は約"+chance+"%です。交渉しますか？"))return;p.tries=(p.tries||0)+1;p.lastOffer={wage,years};if(Math.random()*100<chance){if(renew){p.wage=wage;p.contract=years;S.latest=p.name+"との契約更新に成功しました。";alert("契約更新に成功しました。");log(p.name+"との契約更新に成功しました。")}else{let cost=(p.initialCost||0);if(c.money<cost){alert("初期費用が足りません。必要資金："+YM(cost));return}c.money-=cost;p.wage=wage;p.contract=years;p.clubId=c.id;p.role="out";p.scouted=true;if(p.category==="student"){p.joinMonth=3;S.pendingJoins.push(p);S.latest=p.name+"と内定合意しました。3月加入予定です。"}else{c.players.push(p);S.latest=p.name+"を獲得しました。"}S.market=S.market.filter(x=>x.id!==p.id);log(S.latest)}}else{p.negotiating=true;S.latest=p.name+"との交渉はまとまりませんでした。条件変更で再交渉可能です。";alert("交渉失敗。条件を変えれば翌週以降に再交渉できます。");log(S.latest)}render()}
+function newSeason(breakdown){let c=uc();S.year++;S.month=8;S.week=1;S.phase="season";S.phaseEndWeek=22;S.round=1;S.schedule=schedule(S.clubs);S.clubs.forEach(cl=>{cl.points=cl.win=cl.draw=cl.lose=cl.gf=cl.ga=0;cl.players.forEach(p=>{p.age++;p.contract=Math.max(0,p.contract-1);p.stamina=100;p.seasonStartOverall=p.overall;p.seasonStartPotential=p.potential;p.seasonHighOverall=p.overall;p.seasonLowOverall=p.overall});cl.manager.contract=Math.max(0,cl.manager.contract-1);cl.sponsors=cl.sponsors.map(sp=>{sp.contract--;sp.paidThisSeason=false;return sp}).filter(sp=>sp.contract>0);if(!cl.sponsors.length)cl.sponsors=[makeSponsor(8,cl.supporters,cl.typeKey)]});let income=0;c.sponsors.forEach(sp=>{if(sp.payType==="年一括"){income+=sp.annual;sp.paidThisSeason=true}});c.money+=income;if(breakdown)breakdown.push(["年一括スポンサー収入",income]);S.market=marketPool();S.latest="新シーズン開幕。スポンサー収入 "+YM(income)+" を受け取りました。";log("新シーズンが始まりました。")}
+function showResult(text,breakdown,mode){
+  let bd=S.lastBreakdown||{before:uc().money,after:uc().money,items:[]};
+  let lines=(breakdown||[]).map(x=>{
+    let unit=x[2]||"万円";
+    let cls=x[1]>=0?"money-plus":"money-minus";
+    return "<div class='stat-row'><span>"+x[0]+"</span><strong class='"+cls+"'>"+(x[1]>=0?"+":"")+x[1].toLocaleString()+unit+"</strong></div>";
+  }).join("");
+  let title=mode==="month"?"1か月のまとめ":mode==="phase"?"次の中断期間まで進めた結果":"試合・週次結果";
+  $("modalContent").innerHTML="<strong>"+title+"</strong><br><br>"+escapeHtml(text).replace(/\n/g,"<br>")+"<br><br><strong>【資金増減内訳】</strong>"+(lines||"<div class='muted'>増減なし</div>")+"<br>"+[
+    ["前週資金",YM(bd.before)],
+    ["今週資金",YM(bd.after)],
+    ["増減",YM(bd.after-bd.before)]
+  ].map(row).join("");
+  $("resultModal").classList.add("active");
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m];
+  });
+}
+function currentAbsWeek(){return (S.year-2026)*52 + (S.month-1)*4 + S.week}
+function negotiate(p,renew){
+  let c=uc(),maxYears=p.age<18?3:5;
+  if(p.lastTryWeek!==undefined && currentAbsWeek()-p.lastTryWeek>=10){p.tries=0;p.lastOffer=null}
+  let wage=Number(prompt("提示年俸（万円）",p.wage||400));if(!wage)return;
+  let years=Number(prompt("契約年数（最大"+maxYears+"年）",Math.min(p.offerYears||p.contract||2,maxYears)));if(!years)return;
+  years=CL(years,1,maxYears);
+  let chance=45+(wage-(p.wage||400))/20+(years-2)*3+c.supporters/1000+(c.manager.motivation-60)*.3;
+  if(p.category==="club")chance-=25;
+  if(p.category==="youth")chance+=22;
+  if(p.category==="student")chance+=8;
+  if(p.category==="free")chance+=5;
+  if(p.tries)chance-=p.tries*8;
+  if(p.lastOffer&&p.lastOffer.wage===wage&&p.lastOffer.years===years)chance-=15;
+  chance=CL(Math.round(chance),5,95);
+  if(!confirm("交渉成功率は約"+chance+"%です。交渉しますか？"))return;
+  p.tries=(p.tries||0)+1;p.lastTryWeek=currentAbsWeek();p.lastOffer={wage,years};
+  if(Math.random()*100<chance){
+    if(renew){
+      p.wage=wage;p.contract=years;
+      S.latest=p.name+"との契約更新に成功しました。";
+      alert("契約更新成功："+p.name+" / 年俸"+YM(wage)+" / "+years+"年");
+      log(S.latest);
+    }else{
+      let cost=(p.initialCost||0);
+      if(c.money<cost){alert("初期費用が足りません。必要資金："+YM(cost));return}
+      c.money-=cost;p.wage=wage;p.contract=years;p.clubId=c.id;p.role="out";p.scouted=true;
+      if(p.category==="student"){
+        p.joinMonth=3;S.pendingJoins.push(p);
+        S.latest=p.name+"と内定合意しました。3月加入予定です。";
+      }else{
+        c.players.push(p);
+        S.latest=p.name+"を獲得しました。";
+      }
+      S.market=S.market.filter(x=>x.id!==p.id);
+      alert("交渉成功："+S.latest+" 初期費用："+YM(cost));
+      log(S.latest);
+    }
+  }else{
+    p.negotiating=true;
+    S.latest=p.name+"との交渉はまとまりませんでした。条件変更、または約2〜3か月後の再交渉で成功率が戻ります。";
+    alert("交渉失敗："+p.name+"。条件を変えれば翌週以降に再交渉可能です。");
+    log(S.latest);
+  }
+  render();
+}
 function scout(p){let c=uc(),cost=150+Math.max(0,p.overall-60)*8;if(c.money<cost){alert("資金が足りません。");return}c.money-=cost;p.scouted=true;S.latest=p.name+"をスカウト調査しました。費用："+YM(cost);log(S.latest);render()}
-function setupGame(){let city=$("cityInput").value.trim()||$("citySelect").value,custom=$("clubInput").value.trim(),u=makeClub(city,$("typeSelect").value,true,custom||null),used=new Set([city]),clubs=[u];while(clubs.length<12){let c=P(cities);if(used.has(c.name))continue;used.add(c.name);clubs.push(makeClub(c.name,"random",false,null))}clubs.forEach(addSquad);S={version:"0.0.12",year:2026,month:8,week:1,phase:"season",phaseEndWeek:22,round:1,userClubId:u.id,clubs,schedule:schedule(clubs),logs:[],latest:"クラブが発足しました。リーグ戦が始まります。",market:[],managerMarket:Array.from({length:5},()=>makeManager(R(50,82))),prev:{rank:1,money:u.money,supporters:u.supporters},lastBreakdown:{before:u.money,after:u.money,items:[]},pendingJoins:[]};S.market=marketPool();let sponsorIncome=0;u.sponsors.forEach(sp=>{if(sp.payType==="年一括"){sponsorIncome+=sp.annual;sp.paidThisSeason=true}});u.money+=sponsorIncome;setColor($("colorSelect").value);u.color=$("colorSelect").value;u.emblem=$("emblemSelect").value;S.prev.rank=rank().findIndex(x=>x.id===u.id)+1;log("新クラブ「"+u.name+"」が発足しました。スポンサー収入 "+YM(sponsorIncome)+" を受け取りました。");$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render()}
-function render(){if(!S)return;let c=uc(),rn=rank().findIndex(x=>x.id===c.id)+1,prev=S.prev||{rank:rn,money:c.money,supporters:c.supporters},rd=prev.rank-rn,md=c.money-prev.money,sd=c.supporters-prev.supporters;setColor(c.color||"#2fa84f");$("clubName").textContent=c.name;$("clubSub").textContent=c.typeLabel+" / "+phaseName()+" / "+S.year+"年"+S.month+"月第"+S.week+"週";$("rankNow").textContent=rn+"位";$("rankDelta").textContent=rd===0?"→":rd>0?"↑"+rd:"↓"+Math.abs(rd);$("rankDelta").className="delta "+(rd>0?"up":rd<0?"down":"flat");$("money").textContent=YM(c.money);$("moneyDelta").textContent=md===0?"→":(md>0?"↑+":"↓")+Math.abs(Math.round(md)).toLocaleString()+"万";$("moneyDelta").className="delta "+(md>0?"up":md<0?"down":"flat");$("usableMoney").textContent=YM(usableMoney(c));$("supporters").textContent=c.supporters.toLocaleString()+"人";$("supporterDelta").textContent=sd===0?"→":(sd>0?"↑+":"↓")+Math.abs(Math.round(sd)).toLocaleString()+"人";$("supporterDelta").className="delta "+(sd>0?"up":sd<0?"down":"flat");$("nextText").innerHTML=nextTextHTML();$("latestBox").textContent=S.latest;renderPhase();renderTopImportant();renderClub(c,rn);renderLineup();renderSquad();renderTransfer();renderFinance();renderStaff();renderStadium();renderLeague();renderLog()}
+function setupGame(){let city=$("cityInput").value.trim()||$("citySelect").value,custom=$("clubInput").value.trim(),u=makeClub(city,$("typeSelect").value,true,custom||null),used=new Set([city]),clubs=[u];while(clubs.length<12){let c=P(cities);if(used.has(c.name))continue;used.add(c.name);clubs.push(makeClub(c.name,"random",false,null))}clubs.forEach(addSquad);S={version:"0.0.14",year:2026,month:8,week:1,phase:"season",phaseEndWeek:22,round:1,userClubId:u.id,clubs,schedule:schedule(clubs),logs:[],latest:"クラブが発足しました。リーグ戦が始まります。",market:[],managerMarket:Array.from({length:5},()=>makeManager(R(50,82))),prev:{rank:1,money:u.money,supporters:u.supporters},lastBreakdown:{before:u.money,after:u.money,items:[]},pendingJoins:[],financeHistory:[],seasonSettlement:null};S.market=marketPool();let sponsorIncome=0;u.sponsors.forEach(sp=>{if(sp.payType==="年一括"){sponsorIncome+=sp.annual;sp.paidThisSeason=true}});u.money+=sponsorIncome;setColor($("colorSelect").value);u.color=$("colorSelect").value;u.emblem=$("emblemSelect").value;S.prev.rank=rank().findIndex(x=>x.id===u.id)+1;log("新クラブ「"+u.name+"」が発足しました。スポンサー収入 "+YM(sponsorIncome)+" を受け取りました。");$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render()}
+function render(){if(!S)return;let c=uc(),rn=rank().findIndex(x=>x.id===c.id)+1,prev=S.prev||{rank:rn,money:c.money,supporters:c.supporters},rd=prev.rank-rn,md=c.money-prev.money,sd=c.supporters-prev.supporters;setColor(c.color||"#2fa84f");$("clubName").textContent=c.name;$("clubSub").textContent=c.typeLabel+" / "+phaseName()+" / "+S.year+"年"+S.month+"月第"+S.week+"週";$("rankNow").textContent=rn+"位";$("rankDelta").textContent=rd===0?"→":rd>0?"↑"+rd:"↓"+Math.abs(rd);$("rankDelta").className="delta "+(rd>0?"up":rd<0?"down":"flat");$("money").textContent=YM(c.money);$("moneyDelta").textContent=md===0?"→":(md>0?"↑+":"↓")+Math.abs(Math.round(md)).toLocaleString()+"万";$("moneyDelta").className="delta "+(md>0?"up":md<0?"down":"flat");$("usableMoney").textContent=YM(usableMoney(c));$("supporters").textContent=c.supporters.toLocaleString()+"人";$("supporterDelta").textContent=sd===0?"→":(sd>0?"↑+":"↓")+Math.abs(Math.round(sd)).toLocaleString()+"人";$("supporterDelta").className="delta "+(sd>0?"up":sd<0?"down":"flat");$("nextText").innerHTML=nextTextHTML();$("latestBox").textContent=S.latest;updateAdvanceButtonLabels();renderPhase();renderTopImportant();renderClub(c,rn);renderLineup();renderSquad();renderGrowthSummary();renderTransfer();renderFinance();renderSettlement();renderStaff();renderStadium();renderLeague();renderLog()}
+function updateAdvanceButtonLabels(){
+  $("monthBtn").textContent="1か月進める（4週）";
+  if(S.phase==="season"){
+    $("seasonBtn").textContent="次の中断期間まで進める";
+  }else if(S.phase==="contract"){
+    $("seasonBtn").textContent="移籍期間まで進める";
+  }else if(S.phase==="transfer"){
+    $("seasonBtn").textContent="キャンプ開始まで進める";
+  }else if(S.phase==="camp"){
+    $("seasonBtn").textContent="開幕まで進める";
+  }else{
+    $("seasonBtn").textContent="現在の期間を最後まで進める";
+  }
+}
 function nextTextHTML(){let c=uc();if(S.phase==="season"){let pair=S.schedule[S.round-1]?.find(p=>p.includes(S.userClubId));if(!pair)return"シーズン最終処理へ進みます。";let home=pair[0]===S.userClubId,op=fc(home?pair[1]:pair[0]),opRank=rank().findIndex(x=>x.id===op.id)+1;return "第"+S.round+"節：<br>"+(home?"ホーム":"アウェー")+" vs "+op.name+"（現在"+opRank+"位）"}return phaseName()+"です。残り"+weeksLeftInPhase()+"週。"}
 function renderPhase(){let msg=S.phase==="transfer"?"移籍期間中です。交渉・獲得が可能です。":S.phase==="contract"?"契約更新期間です。契約満了が近い選手を確認してください。":S.phase==="camp"?"キャンプ期間です。開幕前の準備を進めます。":"リーグ戦期間です。開幕直後4節までは登録可能期間です。";$("phaseBox").innerHTML="<div class='"+(S.phase==="season"?"goodbox":"warnbox")+"'>"+msg+"</div>"}
 function renderTopImportant(){let c=uc(),i=incomeEst(c),e=expenseEst(c);$("topImportant").innerHTML=[["今季使用可能資金",YM(usableMoney(c))],["年間収支見込",YM(i.total-e.total)],["期末現金見込",YM(cashFlowForecast(c))],["次の注意",c.construction?"スタジアム工事中 残"+c.construction.weeksLeft+"週":S.phase==="transfer"?"移籍期間中":"なし"]].map(row).join("")}
@@ -227,10 +380,50 @@ function renderFormationBoard(){let c=uc(),st=[...c.players.filter(p=>p.role==="
 function posRank(p){return{GK:0,DF:1,MF:2,FW:3}[p.pos]??9}function fit(p,slot){return p.detailMain===slot||p.detailSubs.includes(slot)||p.pos===(["CB","SB","WB"].includes(slot)?"DF":["CMF","DMF","OMF","SMF"].includes(slot)?"MF":["FW","WG"].includes(slot)?"FW":"GK")}
 function renderLineup(){let c=uc(),st=c.players.filter(p=>p.role==="starter"),be=c.players.filter(p=>p.role==="bench");$("lineupSummary").textContent="スタメン "+st.length+"/11　ベンチ "+be.length+"/7　交代方針："+c.subPolicy;renderFormationBoard();$("lineupTable").innerHTML="<thead><tr><th>名前</th><th>位置</th><th>年齢</th><th>総合</th><th>素質</th><th>体力</th><th>起用</th></tr></thead><tbody>"+c.players.sort((a,b)=>(a.role==="starter"?0:a.role==="bench"?1:2)-(b.role==="starter"?0:b.role==="bench"?1:2)||posRank(a)-posRank(b)||b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+p.pos+"/"+p.detailMain+"</td><td>"+p.age+"</td><td>"+p.overall+"</td><td>"+p.potential+"</td><td>"+p.stamina+"</td><td>"+p.role+"</td></tr>").join("")+"</tbody>"}
 function renderSquad(){let c=uc();$("squadTable").innerHTML="<thead><tr><th>名前</th><th>ルーツ</th><th>位置</th><th>年齢</th><th>タイプ</th><th>総合</th><th>素質</th><th>年俸</th><th>契約</th><th>出場</th><th>平均評価</th></tr></thead><tbody>"+c.players.sort((a,b)=>b.overall-a.overall).map(p=>"<tr><td>"+p.name+"</td><td>"+p.root+"</td><td>"+p.pos+"/"+p.detailMain+"</td><td>"+p.age+"</td><td>"+p.type+"</td><td>"+p.overall+"</td><td>"+p.potential+"</td><td>"+YM(p.wage)+"</td><td>"+p.contract+"年</td><td>"+p.apps+"</td><td>"+(p.apps?(p.ratingSum/p.apps).toFixed(2):"-")+"</td></tr>").join("")+"</tbody>"}
-function renderTransfer(){let c=uc();$("transferNotice").innerHTML="<div class='infobox'>"+categoryPeriodText()+"</div><div class='"+(S.phase==="transfer"||isOpeningRegistration()?"goodbox":"warnbox")+"'>現在："+phaseName()+"。"+(isOpeningRegistration()?"開幕直後登録期間です。":"")+"</div>";$("transferNote").textContent="同じ条件で再交渉すると成功率が下がります。契約年数は通常最大5年、18歳未満は最大3年です。";let list=S.market.filter(p=>marketFilter==="all"||marketFilter==="negotiating"&&p.negotiating||p.category===marketFilter);$("marketList").innerHTML=list.map(p=>{let known=p.scouted||p.category!=="club",info=known?"総合"+p.overall+" / 素質"+p.potential:"総合"+p.overall+"前後 / 詳細不明";return"<div class='market-card'><div class='row'><strong>"+p.name+"</strong><span class='badge'>"+catLabel(p.category)+"</span></div><div>"+p.age+"歳 / "+p.pos+"/"+p.detailMain+" / "+info+(p.originClub?" / 所属："+p.originClub:"")+"</div><div class='muted'>年俸目安："+YM(p.wage)+" / 契約金："+YM(p.signingFee)+" / 移籍金・違約金："+YM(p.transferFee)+"</div><div class='actions'><button data-scout='"+p.id+"' "+(known?"disabled":"")+">スカウト調査</button><button data-neg='"+p.id+"' class='primary' "+(canTransfer(p.category)?"":"disabled")+">条件提示</button></div></div>"}).join("");document.querySelectorAll("[data-scout]").forEach(b=>b.onclick=()=>scout(S.market.find(p=>p.id===b.dataset.scout)));document.querySelectorAll("[data-neg]").forEach(b=>b.onclick=()=>negotiate(S.market.find(p=>p.id===b.dataset.neg),false));renderRenewal()}
+function renderGrowthSummary(){
+  let c=uc();
+  c.players.forEach(p=>{
+    if(p.seasonStartOverall===undefined){p.seasonStartOverall=p.overall;p.seasonStartPotential=p.potential}
+  });
+  let sorted=[...c.players].sort((a,b)=>((b.overall-(b.seasonStartOverall||b.overall))-(a.overall-(a.seasonStartOverall||a.overall))));
+  let growth=sorted.slice(0,10);
+  let declining=[...c.players].sort((a,b)=>((a.overall-(a.seasonStartOverall||a.overall))-(b.overall-(b.seasonStartOverall||b.overall)))).slice(0,6);
+  let starters=c.players.filter(p=>p.overall>=62&&p.age<=24).sort((a,b)=>b.overall-a.overall).slice(0,8);
+  let html1="<h4>今季成長ランキング</h4>"+growth.map((p,i)=>{
+    let d=p.overall-(p.seasonStartOverall||p.overall);
+    return "<div class='stat-row'><span>"+(i+1)+". "+p.name+"　"+p.pos+"/"+p.detailMain+"</span><strong class='"+(d>=0?"growth-up":"growth-down")+"'>"+(p.seasonStartOverall||p.overall)+"→"+p.overall+"（"+(d>=0?"+":"")+d+"）</strong></div>";
+  }).join("");
+  let html2="<h4>スタメン候補に育ってきた若手</h4>"+(starters.length?starters.map(p=>"<div class='stat-row'><span>"+p.name+"　"+p.age+"歳 / "+p.pos+"/"+p.detailMain+"</span><strong>総合"+p.overall+" / 素質"+p.potential+"</strong></div>").join(""):"<div class='muted'>まだ目立つ若手はいません。</div>");
+  let html3="<h4>低下が目立つ選手</h4>"+declining.map(p=>{
+    let d=p.overall-(p.seasonStartOverall||p.overall);
+    return "<div class='stat-row'><span>"+p.name+"　"+p.age+"歳</span><strong class='"+(d<0?"growth-down":"flat")+"'>"+(p.seasonStartOverall||p.overall)+"→"+p.overall+"（"+(d>=0?"+":"")+d+"）</strong></div>";
+  }).join("");
+  $("growthSummaryBox").innerHTML=html1+"<br>"+html2+"<br>"+html3;
+}
+function negotiationStatus(p){
+  if(!p.lastTryWeek&&p.lastTryWeek!==0)return "交渉履歴なし";
+  let remain=10-(currentAbsWeek()-p.lastTryWeek);
+  if(remain<=0)return "交渉印象：回復済み";
+  return "交渉印象：前回交渉の影響あり（あと"+remain+"週で回復）";
+}
+function renderTransfer(){let c=uc();$("transferNotice").innerHTML="<div class='infobox'>"+categoryPeriodText()+"</div><div class='"+(S.phase==="transfer"||isOpeningRegistration()?"goodbox":"warnbox")+"'>現在："+phaseName()+"。"+(isOpeningRegistration()?"開幕直後登録期間です。":"")+"</div>";$("transferNote").textContent="同じ条件で再交渉すると成功率が下がります。契約年数は通常最大5年、18歳未満は最大3年です。";let list=S.market.filter(p=>marketFilter==="all"||marketFilter==="negotiating"&&p.negotiating||p.category===marketFilter);$("marketList").innerHTML=list.map(p=>{let known=p.scouted||p.category!=="club",info=known?"総合"+p.overall+" / 素質"+p.potential:"総合"+p.overall+"前後 / 詳細不明";return"<div class='market-card'><div class='row'><strong>"+p.name+"</strong><span class='badge'>"+catLabel(p.category)+"</span></div><div>"+p.age+"歳 / "+p.pos+"/"+p.detailMain+" / "+info+(p.originClub?" / 所属："+p.originClub:"")+"</div><div class='muted'>年俸目安："+YM(p.wage)+" / 契約金："+YM(p.signingFee)+" / 移籍金・違約金："+YM(p.transferFee)+"</div><div class='muted'>"+negotiationStatus(p)+"</div><div class='actions'><button data-scout='"+p.id+"' "+(known?"disabled":"")+">スカウト調査</button><button data-neg='"+p.id+"' class='primary' "+(canTransfer(p.category)?"":"disabled")+">条件提示</button></div></div>"}).join("");document.querySelectorAll("[data-scout]").forEach(b=>b.onclick=()=>scout(S.market.find(p=>p.id===b.dataset.scout)));document.querySelectorAll("[data-neg]").forEach(b=>b.onclick=()=>negotiate(S.market.find(p=>p.id===b.dataset.neg),false));renderRenewal()}
 function renderRenewal(){let list=uc().players.filter(p=>p.contract<=1);$("renewalList").innerHTML=list.length?list.map(p=>"<div class='market-card'><strong>"+p.name+"</strong><div>"+p.age+"歳 / "+p.pos+" / 総合"+p.overall+" / 現年俸"+YM(p.wage)+" / 残"+p.contract+"年</div><button class='primary' data-renew='"+p.id+"'>更新交渉</button></div>").join(""):"<div class='muted'>契約更新対象はいません。</div>";document.querySelectorAll("[data-renew]").forEach(b=>b.onclick=()=>negotiate(uc().players.find(p=>p.id===b.dataset.renew),true))}
 function catLabel(c){return{free:"自由契約",student:"学生",overseasYouth:"海外若手",youth:"ユース",club:"他チーム"}[c]||c}
 function renderFinance(){let c=uc(),i=incomeEst(c),e=expenseEst(c);$("financeBox").innerHTML=[["スポンサー収入",YM(i.sponsor)],["入場料収入",YM(i.gate)],["グッズ・地域収入",YM(i.goods)],["分配金・賞金見込",YM(i.prize)],["収入合計",YM(i.total)],["選手・監督人件費",YM(e.wages)],["スタッフ・育成費",YM(e.staff)],["遠征費",YM(e.travel)],["スタジアム維持費",YM(e.stadium)],["支出合計",YM(e.total)],["年間収支",YM(i.total-e.total)]].map(row).join("");$("cashflowBox").innerHTML=[["現在資金",YM(c.money)],["年間収支見込",YM(i.total-e.total)],["予約済み支出",YM(c.reserved||0)],["期末現金見込",YM(cashFlowForecast(c))],["今季使用可能資金",YM(usableMoney(c))]].map(row).join("");let bd=S.lastBreakdown||{before:c.money,after:c.money,items:[]};$("moneyLogBox").innerHTML=[["前週資金",YM(bd.before)],["今週資金",YM(bd.after)],["増減",YM(bd.after-bd.before)]].map(row).join("")+"<br>"+(bd.items||[]).map(x=>"<div class='stat-row'><span>"+x[0]+"</span><strong>"+(x[1]>=0?"+":"")+x[1].toLocaleString()+(x[2]||"万円")+"</strong></div>").join("");$("sponsorBox").innerHTML=c.sponsors.map(s=>"<div class='market-card'><strong>"+s.name+"</strong><div>"+s.scale+" / 年間"+YM(s.annual)+" / "+s.payType+" / 残"+s.contract+"年</div></div>").join("")}
+function renderSettlement(){
+  let c=uc(),i=incomeEst(c),e=expenseEst(c),bd=S.lastBreakdown||{before:c.money,after:c.money,items:[]};
+  $("settlementBox").innerHTML=[
+    ["現在資金",YM(c.money)],
+    ["前回資金",YM(bd.before)],
+    ["直近増減",YM(bd.after-bd.before)],
+    ["年間収入見込",YM(i.total)],
+    ["年間支出見込",YM(e.total)],
+    ["年間収支見込",YM(i.total-e.total)],
+    ["期末現金見込",YM(cashFlowForecast(c))],
+    ["予約済み支出",YM(c.reserved||0)],
+    ["今季使用可能資金",YM(usableMoney(c))]
+  ].map(row).join("")+"<br><div class='infobox'>決算ページの土台です。今後はシーズン終了時の実績収入・実績支出・スポンサー更新・契約満了・工事支払をここに集約します。</div>";
+}
 function renderStaff(){let c=uc(),m=c.manager;$("managerBox").innerHTML=[["監督",m.name],["攻撃/守備",m.attack+" / "+m.defense],["育成/モチベ",m.training+" / "+m.motivation],["得意",m.fit],["年俸",YM(m.wage)],["契約/違約金",m.contract+"年 / "+YM(m.releaseFee)]].map(row).join("");$("managerMarket").innerHTML=S.managerMarket.map(m=>"<div class='market-card'><strong>"+m.name+"</strong><div>攻"+m.attack+" 守"+m.defense+" 育"+m.training+" / 得意："+m.fit+"</div><div>年俸"+YM(m.wage)+" / 違約金"+YM(m.releaseFee)+" / 契約"+m.contract+"年</div><button data-mgr='"+m.id+"' class='primary'>監督交代</button></div>").join("");document.querySelectorAll("[data-mgr]").forEach(b=>b.onclick=()=>changeManager(S.managerMarket.find(m=>m.id===b.dataset.mgr)))}
 function changeManager(m){let c=uc(),cost=(c.manager?c.manager.releaseFee:0)+m.releaseFee;if(c.money<cost){alert("資金が足りません。必要資金："+YM(cost));return}if(confirm("現監督違約金と招聘費で"+YM(cost)+"かかります。交代しますか？")){c.money-=cost;c.manager=m;S.managerMarket=S.managerMarket.filter(x=>x.id!==m.id);log("監督を"+m.name+"に交代しました。");render()}}
 function renderStadium(){let c=uc();$("stadiumBox").innerHTML=[["現在収容",c.stadium.toLocaleString()+"人"],["J3基準",c.stadium>=5000?"OK":"不足"],["J2基準",c.stadium>=10000?"OK":"不足"],["J1基準",c.stadium>=15000?"OK":"不足"],["工事状況",c.construction?("工事中 残"+c.construction.weeksLeft+"週 / 完成+"+c.construction.seats+"席"):"なし"],["次の拡張費用",YM(expandCost(c))]].map(row).join("")}
@@ -240,7 +433,7 @@ function renderLeague(){$("leagueTable").innerHTML="<thead><tr><th>順位</th><t
 function renderLog(){$("logList").innerHTML=S.logs.map(l=>"<div class='log-item'><strong>"+l.date+"</strong><br>"+l.text+"</div>").join("")}
 function save(){if(!S){alert("保存するゲームがありません。");return}localStorage.setItem("footballClubBuilderSaveV12",JSON.stringify(S));alert("保存しました。")}
 function load(){let raw=localStorage.getItem("footballClubBuilderSaveV12");if(!raw){alert("保存データがありません。");return}S=JSON.parse(raw);$("startScreen").classList.remove("active");$("gameScreen").classList.add("active");render();alert("読み込みました。")}
-function setup(){cities.forEach(c=>{let o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("citySelect").appendChild(o)});colors.forEach(c=>{let o=document.createElement("option");o.value=c[1];o.textContent=c[0];$("colorSelect").appendChild(o)});emblems.forEach(e=>{let o=document.createElement("option");o.value=e;o.textContent=e;$("emblemSelect").appendChild(o)});$("citySelect").onchange=()=>{let c=cityObj($("citySelect").value);$("cityInput").value=c.name;$("clubInput").value=clubName(c)};$("rerollAllBtn").onclick=setSuggested;$("rerollClubBtn").onclick=()=>{$("clubInput").value=clubName(cityObj($("cityInput").value||$("citySelect").value))};$("colorSelect").onchange=updateEmblemPreview;$("emblemSelect").onchange=updateEmblemPreview;$("startBtn").onclick=setupGame;$("saveBtn").onclick=save;$("loadBtn").onclick=load;$("newGameBtn").onclick=()=>{if(!S||confirm("現在のデータを破棄して新しく始めますか？")){S=null;$("gameScreen").classList.remove("active");$("startScreen").classList.add("active");setSuggested()}};$("advanceBtn").onclick=advanceWeek;$("monthBtn").onclick=()=>{for(let i=0;i<4;i++)advanceWeek()};$("seasonBtn").onclick=()=>{let n=weeksLeftInPhase();for(let i=0;i<n;i++)advanceWeek()};$("autoNowBtn").onclick=()=>{autoLineup(uc(),"now");render()};$("autoBalanceBtn").onclick=()=>{autoLineup(uc(),"balance");render()};$("autoYouthBtn").onclick=()=>{autoLineup(uc(),"youth");render()};$("subPolicySelect").onchange=()=>{uc().subPolicy=$("subPolicySelect").value;render()};$("refreshScoutBtn").onclick=()=>{let cost=400;if(uc().money<cost){alert("資金が足りません。");return}uc().money-=cost;S.market=marketPool();log("スカウトリストを更新しました。");render()};$("expandStadiumBtn").onclick=expandStadium;$("modalClose").onclick=()=>$("resultModal").classList.remove("active");document.querySelectorAll(".segment button").forEach(b=>b.onclick=()=>{marketFilter=b.dataset.filter;document.querySelectorAll(".segment button").forEach(x=>x.classList.remove("activeChoice"));b.classList.add("activeChoice");renderTransfer()});document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");$("tab-"+btn.dataset.tab).classList.add("active")});setSuggested();updateEmblemPreview()}
+function setup(){cities.forEach(c=>{let o=document.createElement("option");o.value=c.name;o.textContent=c.name;$("citySelect").appendChild(o)});colors.forEach(c=>{let o=document.createElement("option");o.value=c[1];o.textContent=c[0];$("colorSelect").appendChild(o)});emblems.forEach(e=>{let o=document.createElement("option");o.value=e;o.textContent=e;$("emblemSelect").appendChild(o)});$("citySelect").onchange=()=>{let c=cityObj($("citySelect").value);$("cityInput").value=c.name;$("clubInput").value=clubName(c)};$("rerollAllBtn").onclick=setSuggested;$("rerollClubBtn").onclick=()=>{$("clubInput").value=clubName(cityObj($("cityInput").value||$("citySelect").value))};$("colorSelect").onchange=updateEmblemPreview;$("emblemSelect").onchange=updateEmblemPreview;$("startBtn").onclick=setupGame;$("saveBtn").onclick=save;$("loadBtn").onclick=load;$("newGameBtn").onclick=()=>{if(!S||confirm("現在のデータを破棄して新しく始めますか？")){S=null;$("gameScreen").classList.remove("active");$("startScreen").classList.add("active");setSuggested()}};$("advanceBtn").onclick=advanceWeek;$("monthBtn").onclick=()=>summarizeAdvance(4,"month");$("seasonBtn").onclick=()=>summarizeAdvance(weeksLeftInPhase(),"phase");$("autoNowBtn").onclick=()=>{autoLineup(uc(),"now");render()};$("autoBalanceBtn").onclick=()=>{autoLineup(uc(),"balance");render()};$("autoYouthBtn").onclick=()=>{autoLineup(uc(),"youth");render()};$("subPolicySelect").onchange=()=>{uc().subPolicy=$("subPolicySelect").value;render()};$("refreshScoutBtn").onclick=()=>{let cost=400;if(uc().money<cost){alert("資金が足りません。");return}uc().money-=cost;S.market=marketPool();log("スカウトリストを更新しました。");render()};$("expandStadiumBtn").onclick=expandStadium;$("modalClose").onclick=()=>$("resultModal").classList.remove("active");document.querySelectorAll(".segment button").forEach(b=>b.onclick=()=>{marketFilter=b.dataset.filter;document.querySelectorAll(".segment button").forEach(x=>x.classList.remove("activeChoice"));b.classList.add("activeChoice");renderTransfer()});document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));document.querySelectorAll(".tab-panel").forEach(p=>p.classList.remove("active"));btn.classList.add("active");$("tab-"+btn.dataset.tab).classList.add("active")});setSuggested();updateEmblemPreview()}
 setup();
 })();
 </script>
